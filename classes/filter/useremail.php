@@ -22,10 +22,29 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+namespace report_extendedlog\filter;
+use moodleform;
 
-$plugin->component = 'report_extendedlog';
-$plugin->version   = 2016051903;
-$plugin->release = '0.1';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->requires  = 2015111000; // Moodle 3.0.
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Сlass for filtering by user's email.
+ *
+ * @package    report_extendedlog
+ * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class useremail extends base {
+
+    /**
+     * Adds controls specific to this condition in the filter form.
+     *
+     * @param \MoodleQuickForm $mform Filter form
+     */
+    public function add_filter_form_fields(&$mform) {
+        $mform->addElement('text', 'useremail', get_string('filter_useremail', 'report_extendedlog'));
+        $mform->setType('useremail', PARAM_TEXT);
+        $mform->setAdvanced('useremail', $this->advanced);
+    }
+
+}

@@ -22,10 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'report_extendedlog';
-$plugin->version   = 2016051903;
-$plugin->release = '0.1';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->requires  = 2015111000; // Moodle 3.0.
+
+if ($hassiteconfig) {
+    $url = new moodle_url('/report/extendedlog/index.php');
+    $ADMIN->add('reports', new admin_externalpage('reportextendedlog', get_string('navigationnode', 'report_extendedlog'),
+        $url, 'report/extendedlog:view'));
+
+    // No report settings.
+    $settings = null;
+}

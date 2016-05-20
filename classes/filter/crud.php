@@ -27,43 +27,27 @@ namespace report_extendedlog\filter;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for filtering by user.
+ * Class for filtering by crud field.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends base {
+class crud extends base {
 
     /**
-     * Return list of users.
+     * Return crud values.
      *
      * @return array list of users.
      */
-    private function get_users_list() {
-        global $DB, $CFG;
-
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($usernames = $cache->get('users')) {
-            return $usernames;
-        }
-
-        $fields = get_all_user_name_fields(true);
-        $fields = "id,$fields";
-        $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
-        $usernames = array();
-        foreach ($users as $user) {
-            $usernames[$user->id] = fullname($user);
-        }
-        unset($usernames[$CFG->siteguest]);
-        \core_collator::asort($usernames);
-        $topusers = array(
-            0 => get_string('filter_user_all', 'report_extendedlog'),
-            $CFG->siteguest => get_string('guestuser'));
-        $usernames = array_merge($topusers, $usernames);
-
-        $cache->set('users', $usernames);
-        return $usernames;
+    private function get_crud_list() {
+        $crudlist = array(
+            'c' => get_string('create'),
+            'r' => get_string('view'),
+            'u' => get_string('update'),
+            'd' => get_string('delete'),
+        );
+        return $crudlist;
     }
 
     /**
@@ -72,9 +56,13 @@ class user extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $users = $this->get_users_list();
-        $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
-        $mform->setAdvanced('user', $this->advanced);
+        $crud = $this->get_crud_list();
+        $checkboxes = array();
+        foreach ($crud as $action => $label) {
+            $checkboxes[] = $mform->createElement('checkbox', $action, '', $label);
+        }
+        $mform->addGroup($checkboxes, 'crud', get_string('filter_crud', 'report_extendedlog'), ' ', true);
+        $mform->setAdvanced('crud', $this->advanced);
     }
 
 }

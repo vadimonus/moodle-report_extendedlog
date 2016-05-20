@@ -26,44 +26,36 @@ namespace report_extendedlog\filter;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir.'/coursecatlib.php');
+
 /**
- * Class for filtering by user.
+ * Class for filtering by category.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends base {
+class category extends base {
 
     /**
      * Return list of users.
      *
      * @return array list of users.
      */
-    private function get_users_list() {
-        global $DB, $CFG;
+    private function get_categories_list() {
+        global $DB;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($usernames = $cache->get('users')) {
-            return $usernames;
+        if ($categories = $cache->get('categories')) {
+            //return $categories;
         }
 
-        $fields = get_all_user_name_fields(true);
-        $fields = "id,$fields";
-        $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
-        $usernames = array();
-        foreach ($users as $user) {
-            $usernames[$user->id] = fullname($user);
-        }
-        unset($usernames[$CFG->siteguest]);
-        \core_collator::asort($usernames);
-        $topusers = array(
-            0 => get_string('filter_user_all', 'report_extendedlog'),
-            $CFG->siteguest => get_string('guestuser'));
-        $usernames = array_merge($topusers, $usernames);
+        $categories = \coursecat::make_categories_list();
+        $all = array(0 => get_string('filter_category_all', 'report_extendedlog'));
+        $categories = array_merge($all, $categories);
 
-        $cache->set('users', $usernames);
-        return $usernames;
+        $cache->set('categories', $categories);
+        return $categories;
     }
 
     /**
@@ -72,9 +64,11 @@ class user extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $users = $this->get_users_list();
-        $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
-        $mform->setAdvanced('user', $this->advanced);
+        $categories = $this->get_categories_list();
+        $mform->addElement('select', 'category', get_string('filter_category', 'report_extendedlog'), $categories);
+        $mform->setAdvanced('category', $this->advanced);
+        $mform->addElement('checkbox', 'category_sub', get_string('filter_category_sub', 'report_extendedlog'));
+        $mform->setAdvanced('category_sub', $this->advanced);
     }
 
 }

@@ -27,43 +27,34 @@ namespace report_extendedlog\filter;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for filtering by user.
+ * Class for filtering by objecttable.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends base {
+class objecttable extends base {
 
     /**
-     * Return list of users.
+     * Return list of tables.
      *
-     * @return array list of users.
+     * @return array list of tables.
      */
-    private function get_users_list() {
-        global $DB, $CFG;
+    private function get_tables_list() {
+        global $DB;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($usernames = $cache->get('users')) {
-            return $usernames;
+        if ($tableslist = $cache->get('tables')) {
+            //return $tableslist ;
         }
 
-        $fields = get_all_user_name_fields(true);
-        $fields = "id,$fields";
-        $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
-        $usernames = array();
-        foreach ($users as $user) {
-            $usernames[$user->id] = fullname($user);
-        }
-        unset($usernames[$CFG->siteguest]);
-        \core_collator::asort($usernames);
-        $topusers = array(
-            0 => get_string('filter_user_all', 'report_extendedlog'),
-            $CFG->siteguest => get_string('guestuser'));
-        $usernames = array_merge($topusers, $usernames);
+        $tableslist = $DB->get_tables();
+        \core_collator::asort($tableslist);
+        $toptables = array('0' => get_string('filter_objecttable_all', 'report_extendedlog'));
+        $tableslist = array_merge($toptables, $tableslist);
 
-        $cache->set('users', $usernames);
-        return $usernames;
+        $cache->set('tables', $tableslist);
+        return $tableslist;
     }
 
     /**
@@ -72,9 +63,9 @@ class user extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $users = $this->get_users_list();
-        $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
-        $mform->setAdvanced('user', $this->advanced);
+        $users = $this->get_tables_list();
+        $mform->addElement('select', 'objecttable', get_string('filter_objecttable', 'report_extendedlog'), $users);
+        $mform->setAdvanced('objecttable', $this->advanced);
     }
 
 }

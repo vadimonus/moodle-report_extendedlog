@@ -27,13 +27,13 @@ namespace report_extendedlog\filter;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for filtering by user.
+ * Class for filtering by relateduser.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends base {
+class relateduser extends base {
 
     /**
      * Return list of users.
@@ -44,7 +44,7 @@ class user extends base {
         global $DB, $CFG;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($usernames = $cache->get('users')) {
+        if ($usernames = $cache->get('relatedusers')) {
             return $usernames;
         }
 
@@ -62,7 +62,7 @@ class user extends base {
             $CFG->siteguest => get_string('guestuser'));
         $usernames = array_merge($topusers, $usernames);
 
-        $cache->set('users', $usernames);
+        $cache->set('relatedusers', $usernames);
         return $usernames;
     }
 
@@ -73,8 +73,8 @@ class user extends base {
      */
     public function add_filter_form_fields(&$mform) {
         $users = $this->get_users_list();
-        $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
-        $mform->setAdvanced('user', $this->advanced);
+        $mform->addElement('select', 'relateduser', get_string('filter_relateduser', 'report_extendedlog'), $users);
+        $mform->setAdvanced('relateduser', $this->advanced);
     }
 
 }

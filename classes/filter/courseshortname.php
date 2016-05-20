@@ -27,43 +27,43 @@ namespace report_extendedlog\filter;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for filtering by user.
+ * Class for filtering by course shortname.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends base {
+class courseshortname extends base {
 
     /**
      * Return list of users.
      *
      * @return array list of users.
      */
-    private function get_users_list() {
-        global $DB, $CFG;
+    private function get_courseshortnames_list() {
+        global $DB, $SITE;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($usernames = $cache->get('users')) {
-            return $usernames;
+        if ($courseshortnames = $cache->get('courseshortnames')) {
+            //return $courseshortnames;
         }
 
-        $fields = get_all_user_name_fields(true);
-        $fields = "id,$fields";
-        $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
-        $usernames = array();
-        foreach ($users as $user) {
-            $usernames[$user->id] = fullname($user);
+        $courses = $DB->get_records('course', array(), 'shortname', 'id,shortname');
+        $courseshortnames = array();
+        foreach ($courses as $course) {
+            $courseshortnames[$course->id] = $course->shortname;
         }
-        unset($usernames[$CFG->siteguest]);
-        \core_collator::asort($usernames);
-        $topusers = array(
-            0 => get_string('filter_user_all', 'report_extendedlog'),
-            $CFG->siteguest => get_string('guestuser'));
-        $usernames = array_merge($topusers, $usernames);
+        $sitename = $courseshortnames[$SITE->id];
+        unset($courseshortnames[$SITE->id]);
+        \core_collator::asort($courseshortnames);
 
-        $cache->set('users', $usernames);
-        return $usernames;
+        $topcourses = array(
+            0 => get_string('filter_courseshortname_all', 'report_extendedlog'),
+            $SITE->id => $sitename);
+        $courseshortnames = array_merge($topcourses, $courseshortnames);
+
+        $cache->set('courseshortnames', $courseshortnames);
+        return $courseshortnames;
     }
 
     /**
@@ -72,9 +72,9 @@ class user extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $users = $this->get_users_list();
-        $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
-        $mform->setAdvanced('user', $this->advanced);
+        $courseshortnames = $this->get_courseshortnames_list();
+        $mform->addElement('select', 'courseshortname', get_string('filter_courseshortname', 'report_extendedlog'), $courseshortnames);
+        $mform->setAdvanced('courseshortname', $this->advanced);
     }
 
 }

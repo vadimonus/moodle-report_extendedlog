@@ -210,7 +210,7 @@ class event extends base {
         $eventslist = array_merge($allevents, $coreeventslist, $plugineventslist);
 
         $cache->set('events', $eventslist);
-        return $componentslist;
+        return $eventslist;
     }
 
     /**

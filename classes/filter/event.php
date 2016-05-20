@@ -26,16 +26,14 @@ namespace report_extendedlog\filter;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/report/eventlist/classes/list_generator.php");
-
 /**
- * Class for filtering by event's component.
+ * Class for filtering by event.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class component extends base {
+class event extends base {
 
     /**
      * Adds controls specific to this condition in the filter form.
@@ -43,9 +41,9 @@ class component extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $components = \report_extendedlog\list_generator::instance()->get_components_menu();
-        $mform->addElement('selectgroups', 'component', get_string('filter_component', 'report_extendedlog'), $components);
-        $mform->setAdvanced('component', $this->advanced);
+        $events = \report_extendedlog\list_generator::instance()->get_events_menu();
+        $mform->addElement('selectgroups', 'event', get_string('filter_event', 'report_extendedlog'), $events);
+        $mform->setAdvanced('event', $this->advanced);
     }
 
 }

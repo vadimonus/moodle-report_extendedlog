@@ -43,7 +43,7 @@ class filter_manager {
      */
     public function __construct() {
         $this->filters = array();
-        $filternames = array('user' => 0, 'useremail' => 1, 'component' => 0);
+        $filternames = array('user' => 0, 'useremail' => 1, 'component' => 0, 'event' => 0);
         foreach ($filternames as $filtername => $advanced) {
             $fullfiltername = "\\report_extendedlog\\filter\\$filtername";
             $this->filters[] = new $fullfiltername($advanced);

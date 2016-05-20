@@ -36,12 +36,190 @@ defined('MOODLE_INTERNAL') || die();
 class event extends base {
 
     /**
+     * Returns list of plugins events.
+     *
+     * @return array
+     */
+    private function get_plugin_events() {
+        $pluginman = \core_plugin_manager::instance();
+        $eventslist = array();
+        $types = \core_component::get_plugin_types();
+        foreach ($types as $type => $typedirectory) {
+            $plugins = \core_component::get_plugin_list($type);
+            foreach ($plugins as $plugin => $plugindirectory) {
+                $eventsdirectory = "$plugindirectory/classes/event";
+                $events = $this->get_events($eventsdirectory, $type . '_' . $plugin);
+                foreach ($events as $event => $eventdirectory) {
+                    $eventname = '\\' . $type . '_' . $plugin . '\\event\\' . $event;
+                    if ($this->method_exists($eventname, 'get_static_info')) {
+                        $ref = new \ReflectionClass($eventname);
+                        if (!$ref->isAbstract()) {
+                            $eventinfo = new \stdClass();
+                            $eventinfo->name = $eventname;
+                            $eventinfo->displayname = $this->get_event_name($eventinfo->name);
+                            $eventinfo->typedisplayname = $pluginman->plugintype_name($type);
+                            $eventinfo->pluginname = $type . '_' . $plugin;
+                            $eventinfo->plugindisplayname = $pluginman->plugin_name($eventinfo->pluginname);
+                            $eventslist[$eventinfo->name] = $eventinfo;
+                        }
+                    }
+                }
+            }
+        }
+        return $eventslist;
+    }
+
+    /**
+     * Returns list of core events.
+     *
+     * @return array
+     */
+    private function get_core_events() {
+        global $CFG;
+
+        $pluginman = \core_plugin_manager::instance();
+        $eventslist = array();
+        $eventsdirectory = "$CFG->libdir/classes/event";
+        $events = $this->get_events($eventsdirectory, 'core');
+        foreach ($events as $event => $eventdirectory) {
+            $eventname = "\\core\\event\\$event";
+            if ($this->method_exists($eventname, 'get_static_info')) {
+                $ref = new \ReflectionClass($eventname);
+                if (!$ref->isAbstract()) {
+                    $eventinfo = new \stdClass();
+                    $eventinfo->name = $eventname;
+                    $eventinfo->displayname = $this->get_event_name($eventinfo->name);
+                    $eventslist[$eventinfo->name] = $eventinfo;
+                }
+            }
+        }
+        return $eventslist;
+    }
+
+    /**
+     * Returns a list of event files in specified directory.
+     *
+     * @param string $directory Location of files.
+     * @param string $plugin Plugin name.
+     * @return array Full location of files from the specified directory.
+     */
+    private function get_events($directory, $plugin) {
+        global $CFG;
+        $finaleventfiles = array();
+        if (is_dir($directory)) {
+            if ($handle = @opendir($directory)) {
+                $eventfiles = scandir($directory);
+                foreach ($eventfiles as $file) {
+                    if ($file != '.' && $file != '..') {
+                        $eventname = substr($file, 0, -4);
+                        $finaleventfiles[$eventname] = $eventname;
+                    }
+                }
+            }
+        }
+        return $finaleventfiles;
+    }
+
+    /**
+     * Checks if the class method exists. Supresses warnings to hide warnings on deprecated events.
+     *
+     * @param string $object Class name.
+     * @param string $method_name The method name.
+     * @return bool <b>TRUE</b> if the method given by <i>method_name</i>
+     * has been defined for the given <i>object</i>, <b>FALSE</b> otherwise.
+     */
+    private function method_exists ($object, $method_name) {
+        global $CFG;
+
+        $debuglevel          = $CFG->debug;
+        $debugdisplay        = $CFG->debugdisplay;
+        $debugdeveloper      = $CFG->debugdeveloper;
+        $CFG->debug          = 0;
+        $CFG->debugdisplay   = false;
+        $CFG->debugdeveloper = false;
+
+        $result = method_exists ($object, $method_name);
+
+        $CFG->debug          = $debuglevel;
+        $CFG->debugdisplay   = $debugdisplay;
+        $CFG->debugdeveloper = $debugdeveloper;
+
+        return $result;
+    }
+
+    /**
+     * Returns localized event name. Supresses warnings to hide warnings on deprecated events.
+     *
+     * @param string $eventclassname Name of the event class.
+     * @return string Localized event name.
+     */
+    private function get_event_name($eventclassname) {
+        global $CFG;
+
+        $debuglevel          = $CFG->debug;
+        $debugdisplay        = $CFG->debugdisplay;
+        $debugdeveloper      = $CFG->debugdeveloper;
+        $CFG->debug          = 0;
+        $CFG->debugdisplay   = false;
+        $CFG->debugdeveloper = false;
+
+        $name = $eventclassname::get_name();
+
+        $CFG->debug          = $debuglevel;
+        $CFG->debugdisplay   = $debugdisplay;
+        $CFG->debugdeveloper = $debugdeveloper;
+
+        return $name;
+    }
+
+    /**
+     * Return list of events for dispalying on form. Caches list in session.
+     *
+     * @return array
+     */
+    public function get_events_list() {
+        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
+        if ($eventslist = $cache->get('events')) {
+            return $eventslist;
+        }
+
+        $pluginevents = $this->get_plugin_events();
+        $plugineventslist = array();
+        foreach ($pluginevents as $event) {
+            $groupname = get_string('filter_event_grouptemplate', 'report_extendedlog', $event);
+            $displayname = get_string('filter_event_template', 'report_extendedlog', $event);
+            $plugineventslist[$groupname][$event->name] = $displayname;
+        }
+        foreach ($plugineventslist as $group => $events) {
+            \core_collator::asort($plugineventslist[$group]);
+        }
+        \core_collator::ksort($plugineventslist);
+
+        $coreevents = $this->get_core_events();
+        $coreeventslist = array();
+        $groupname = get_string('filter_event_core', 'report_extendedlog');
+        foreach ($coreevents as $event) {
+            $displayname = get_string('filter_event_template', 'report_extendedlog', $event);
+            $coreeventslist[$groupname][$event->name] = $displayname;
+        }
+        \core_collator::asort($coreeventslist[$groupname]);
+
+        $allevents = array(
+            get_string('filter_event_all', 'report_extendedlog') =>
+                array('all' => get_string('filter_event_all', 'report_extendedlog')));
+        $eventslist = array_merge($allevents, $coreeventslist, $plugineventslist);
+
+        $cache->set('events', $eventslist);
+        return $componentslist;
+    }
+
+    /**
      * Adds controls specific to this condition in the filter form.
      *
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $events = \report_extendedlog\list_generator::instance()->get_events_menu();
+        $events = $this->get_events_list();
         $mform->addElement('selectgroups', 'event', get_string('filter_event', 'report_extendedlog'), $events);
         $mform->setAdvanced('event', $this->advanced);
     }

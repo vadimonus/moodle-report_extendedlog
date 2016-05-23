@@ -51,7 +51,7 @@ class courseshortname extends base {
         $courses = $DB->get_records('course', array(), 'shortname', 'id,shortname');
         $courseshortnames = array();
         foreach ($courses as $course) {
-            // Using string keys to prevent problems on sorting
+            // Using string keys to prevent problems on sorting.
             $courseshortnames['a'.$course->id] = $course->shortname;
         }
         $sitename = $courseshortnames['a'.SITEID];
@@ -74,7 +74,8 @@ class courseshortname extends base {
      */
     public function definition_callback(&$mform) {
         $courseshortnames = $this->get_courseshortnames_list();
-        $mform->addElement('select', 'courseshortname', get_string('filter_courseshortname', 'report_extendedlog'), $courseshortnames);
+        $mform->addElement('select', 'courseshortname', get_string('filter_courseshortname', 'report_extendedlog'),
+                $courseshortnames);
         $mform->setAdvanced('courseshortname', $this->advanced);
     }
 

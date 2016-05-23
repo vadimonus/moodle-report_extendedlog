@@ -127,11 +127,11 @@ class eventname extends base {
      * Checks if the class method exists. Supresses warnings to hide warnings on deprecated events.
      *
      * @param string $object Class name.
-     * @param string $method_name The method name.
+     * @param string $methodname The method name.
      * @return bool <b>TRUE</b> if the method given by <i>method_name</i>
      * has been defined for the given <i>object</i>, <b>FALSE</b> otherwise.
      */
-    private function method_exists ($object, $method_name) {
+    private function method_exists ($object, $methodname) {
         global $CFG;
 
         $debuglevel          = $CFG->debug;
@@ -141,7 +141,7 @@ class eventname extends base {
         $CFG->debugdisplay   = false;
         $CFG->debugdeveloper = false;
 
-        $result = method_exists ($object, $method_name);
+        $result = method_exists ($object, $methodname);
 
         $CFG->debug          = $debuglevel;
         $CFG->debugdisplay   = $debugdisplay;
@@ -207,9 +207,8 @@ class eventname extends base {
         }
         \core_collator::asort($coreeventslist[$groupname]);
 
-        $allevents = array(
-            get_string('filter_event_all', 'report_extendedlog') =>
-                array(0 => get_string('filter_event_all', 'report_extendedlog')));
+        $strall = get_string('filter_event_all', 'report_extendedlog');
+        $allevents = array($strall => array(0 => $strall));
         $eventslist = array_merge($allevents, $coreeventslist, $plugineventslist);
 
         $cache->set('eventnames', $eventslist);

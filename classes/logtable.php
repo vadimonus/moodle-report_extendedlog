@@ -49,7 +49,7 @@ class logtable extends \report_log_table_log {
     /**
      * Constructor
      *
-     * @param $logreader Log reader
+     * @param \core\log\sql_reader $logreader Log reader
      * @param string $where Where part of sql query
      * @param array $params Array of sql params
      */
@@ -104,7 +104,7 @@ class logtable extends \report_log_table_log {
      *
      * @param int $perpage Items to show perpage
      */
-    function show($perpage = 100) {
+    public function show($perpage = 100) {
         $this->setup();
         $this->query_db($perpage, false);
         $this->build_table();

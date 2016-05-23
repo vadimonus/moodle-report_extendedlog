@@ -35,10 +35,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class ip4 extends base {
 
-    /** For addresses in this array will be used LIKE search. */
+    /** @var array For addresses in this array will be used LIKE search. */
     protected $addresseslike = array();
 
-    /** For addresses in this array will be used IN search. */
+    /** @var array For addresses in this array will be used IN search. */
     protected $addressesin = array();
 
     /**
@@ -55,7 +55,7 @@ class ip4 extends base {
 
     /**
      * Returns sql where part and params.
-     * 
+     *
      * Subnet strings can be in one of formats:
      * 1: xxx.xxx.xxx.xxx-yyy (a range of IP addresses in the last group)
      * 2: xxx.xxx or xxx.xxx. (partial address)
@@ -148,8 +148,8 @@ class ip4 extends base {
     private function get_ip_partial($subnet) {
         $parts = explode('.', $subnet);
         $count = count($parts);
-        if ($parts[$count-1] === '') {
-            unset($parts[$count-1]); // Trim trailing dot.
+        if ($parts[$count - 1] === '') {
+            unset($parts[$count - 1]); // Trim trailing dot.
             $count--;
             $subnet = implode('.', $parts);
         }

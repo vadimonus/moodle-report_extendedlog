@@ -51,7 +51,7 @@ class coursefullname extends base {
         $courses = $DB->get_records('course', array(), 'fullname', 'id,fullname');
         $coursefullnames = array();
         foreach ($courses as $course) {
-            // Using string keys to prevent problems on sorting
+            // Using string keys to prevent problems on sorting.
             $coursefullnames['a'.$course->id] = $course->fullname;
         }
         $sitename = $coursefullnames['a'.SITEID];

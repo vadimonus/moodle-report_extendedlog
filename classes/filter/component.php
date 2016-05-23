@@ -87,11 +87,12 @@ class component extends base {
             \core_collator::asort($componentslist[$key]);
         }
         \core_collator::ksort($componentslist);
+        $strall = get_string('filter_component_all', 'report_extendedlog');
+        $strcore = get_string('filter_component_core', 'report_extendedlog');
         $topcomponents = array(
-            get_string('filter_component_all', 'report_extendedlog') =>
-                array(0 => get_string('filter_component_all', 'report_extendedlog')),
-            get_string('filter_component_core', 'report_extendedlog') =>
-                array('core' => get_string('filter_component_core', 'report_extendedlog')));
+            $strall => array(0 => $strall),
+            $strcore => array('core' => $strcore)
+        );
         $componentslist = array_merge($topcomponents, $componentslist);
 
         $cache->set('components', $componentslist);

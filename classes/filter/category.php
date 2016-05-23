@@ -76,7 +76,7 @@ class category extends base {
         return $searchoptions;
     }
 
-/**
+    /**
      * Adds controls specific to this condition in the filter form.
      *
      * @param \MoodleQuickForm $mform Filter form

@@ -53,7 +53,7 @@ class user extends base {
         $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
         $usernames = array();
         foreach ($users as $user) {
-            // Using string keys to prevent problems on sorting
+            // Using string keys to prevent problems on sorting.
             $usernames['a'.$user->id] = fullname($user);
         }
         unset($usernames['a'.$CFG->siteguest]);

@@ -83,44 +83,4 @@ class report_viewed extends \core\event\base {
         return new \moodle_url('/report/extendedlog/index.php');
     }
 
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-        if (!isset($this->other['groupid'])) {
-            throw new \coding_exception('The \'groupid\' value must be set in other.');
-        }
-
-        if (!isset($this->other['date'])) {
-            throw new \coding_exception('The \'date\' value must be set in other.');
-        }
-
-        if (!isset($this->other['modid'])) {
-            throw new \coding_exception('The \'modid\' value must be set in other.');
-        }
-
-        if (!isset($this->other['modaction'])) {
-            throw new \coding_exception('The \'modaction\' value must be set in other.');
-        }
-
-        if (!isset($this->other['logformat'])) {
-            throw new \coding_exception('The \'logformat\' value must be set in other.');
-        }
-
-        if (!isset($this->relateduserid)) {
-            throw new \coding_exception('The \'relateduserid\' must be set.');
-        }
-    }
-
-    public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['modid'] = array('db' => 'course_modules', 'restore' => 'course_module');
-        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
-
-        return $othermapped;
-    }
 }

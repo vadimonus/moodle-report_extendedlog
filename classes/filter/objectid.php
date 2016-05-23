@@ -40,7 +40,7 @@ class objectid extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $mform->addElement('text', 'objectid', get_string('filter_objectid', 'report_extendedlog'));
         $mform->setType('objectid', PARAM_INT);
         $mform->setAdvanced('objectid', $this->advanced);

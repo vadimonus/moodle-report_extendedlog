@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event extends base {
+class eventname extends base {
 
     /** @var string */
     protected $event;
@@ -182,8 +182,8 @@ class event extends base {
      */
     public function get_events_list() {
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($eventslist = $cache->get('events')) {
-            //return $eventslist;
+        if ($eventslist = $cache->get('eventnames')) {
+            return $eventslist;
         }
 
         $pluginevents = $this->get_plugin_events();
@@ -212,7 +212,7 @@ class event extends base {
                 array(0 => get_string('filter_event_all', 'report_extendedlog')));
         $eventslist = array_merge($allevents, $coreeventslist, $plugineventslist);
 
-        $cache->set('events', $eventslist);
+        $cache->set('eventnames', $eventslist);
         return $eventslist;
     }
 
@@ -221,45 +221,22 @@ class event extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $events = $this->get_events_list();
-        $mform->addElement('selectgroups', 'event', get_string('filter_event', 'report_extendedlog'), $events);
-        $mform->setAdvanced('event', $this->advanced);
-    }
-
-    /**
-     * Parse data returned from form.
-     *
-     * @param object $data Data returned from $form->get_data()
-     */
-    public function process_form_data($data) {
-        $this->event = optional_param('event', '', PARAM_TEXT);
-    }
-
-    /**
-     * Returns array of request parameters, specific for this filter.
-     *
-     * @return array
-     */
-    public function get_page_params() {
-        $event = optional_param('event', '', PARAM_TEXT);
-        if (!empty($event)) {
-            $result = array('event' => $event);
-        } else {
-            $result = array();
-        }
-        return $result;
+        $mform->addElement('selectgroups', 'eventname', get_string('filter_event', 'report_extendedlog'), $events);
+        $mform->setAdvanced('eventname', $this->advanced);
     }
 
     /**
      * Returns sql where part and params.
      *
+     * @param array $data Form data or page paramenters as array
      * @return array($where, $params)
      */
-    public function get_sql() {
-        if (!empty($this->event)) {
+    public function get_sql($data) {
+        if (!empty($data['eventname'])) {
             $where = 'eventname = :eventname';
-            $params = array('eventname' => $this->event);
+            $params = array('eventname' => $data['eventname']);
         } else {
             $where = '';
             $params = array();

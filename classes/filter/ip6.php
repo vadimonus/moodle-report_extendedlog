@@ -40,7 +40,7 @@ class ip6 extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $mform->addElement('text', 'ip6', get_string('filter_ip6', 'report_extendedlog'));
         $mform->setType('ip6', PARAM_TEXT);
         $mform->addHelpButton('ip6', 'filter_ip6', 'report_extendedlog');

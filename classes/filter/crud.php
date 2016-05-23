@@ -55,7 +55,7 @@ class crud extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $crud = $this->get_crud_list();
         $checkboxes = array();
         foreach ($crud as $action => $label) {

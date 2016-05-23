@@ -55,7 +55,7 @@ class filter_form extends \moodleform {
         $mform->addElement('header', 'filter', get_string('filterheader', 'report_extendedlog'));
 
         $filtermanager = $this->_customdata['filter_manager'];
-        $filtermanager->add_filter_form_fields($mform);
+        $filtermanager->definition_callback($mform);
 
         $this->add_action_buttons(false, get_string('showlogs', 'report_extendedlog'));
     }
@@ -71,7 +71,7 @@ class filter_form extends \moodleform {
         $parenterrors = parent::validation($data, $files);
 
         $filtermanager = $this->_customdata['filter_manager'];
-        $filterserrors = $filtermanager->validate_form_data($data, $files);
+        $filterserrors = $filtermanager->validation_callback($data, $files);
 
         return array_merge($parenterrors, $filterserrors);
     }

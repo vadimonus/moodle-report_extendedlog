@@ -54,7 +54,7 @@ class origin extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $origins = $this->get_origin_list();
         $mform->addElement('select', 'origin', get_string('filter_origin', 'report_extendedlog'), $origins);
         $mform->setAdvanced('origin', $this->advanced);

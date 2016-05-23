@@ -71,7 +71,7 @@ class user extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $users = $this->get_users_list();
         $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
         $mform->setAdvanced('user', $this->advanced);

@@ -71,7 +71,7 @@ class coursefullname extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $coursefullnames = $this->get_coursefullnames_list();
         $mform->addElement('select', 'coursefullname', get_string('filter_coursefullname', 'report_extendedlog'), $coursefullnames);
         $mform->setAdvanced('coursefullname', $this->advanced);

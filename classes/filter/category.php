@@ -63,7 +63,7 @@ class category extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $categories = $this->get_categories_list();
         $mform->addElement('select', 'category', get_string('filter_category', 'report_extendedlog'), $categories);
         $mform->setAdvanced('category', $this->advanced);

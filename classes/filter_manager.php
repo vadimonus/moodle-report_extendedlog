@@ -45,7 +45,7 @@ class filter_manager {
         $this->filters = array();
         $filternames = array(
             'component' => 0,
-            'event' => 0,
+            'eventname' => 0,
             'objecttable' => 1,
             'objectid' => 1,
             'crud' => 1,
@@ -74,20 +74,9 @@ class filter_manager {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         foreach ($this->filters as $filter) {
-            $filter->add_filter_form_fields($mform);
-        }
-    }
-
-    /**
-     * Parse data returned from form.
-     *
-     * @param object $data Data returned from $form->get_data()
-     */
-    public function process_form_data($data) {
-        foreach ($this->filters as $filter) {
-            $filter->process_form_data($data);
+            $filter->definition_callback($mform);
         }
     }
 
@@ -98,53 +87,32 @@ class filter_manager {
      * @param array $files array of uploaded files "element_name"=>tmp_file_path
      * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
      */
-    public function validate_form_data($data, $files) {
+    public function validation_callback($data, $files) {
         $errors = array();
         foreach ($this->filters as $filter) {
-            $filtererrors = $filter->validate_form_data($data, $files);
+            $filtererrors = $filter->validation_callback($data, $files);
             $errors = array_merge($errors, $filtererrors);
         }
         return $errors;
     }
 
     /**
-     * Returns array of request parameters, specific for filters.
-     *
-     * @return array
-     */
-    public function get_page_params() {
-        $params = array();
-        foreach ($this->filters as $filter) {
-            $filterparams = $filter->get_page_params();
-            $params = array_merge($params, $filterparams);
-        }
-
-        $logreader = optional_param('logreader', '', PARAM_COMPONENT);
-        if (!empty($logreader)) {
-            $params['logreader'] = $logreader;
-        }
-        return $params;
-    }
-
-    /**
      * Returns sql where part and params.
      *
+     * @param array $data Form data or page paramenters as array
      * @return array($where, $params)
      */
-    public function get_sql() {
+    public function get_sql($data) {
         $wherearray = array();
         $params = array();
         foreach ($this->filters as $filter) {
-            list($filterwhere, $filterparams) = $filter->get_sql();
+            list($filterwhere, $filterparams) = $filter->get_sql($data);
             if (!empty($filterwhere)) {
                 $wherearray[] = $filterwhere;
                 $params = array_merge($params, $filterparams);
             }
         }
         $where = implode(' AND ', $wherearray);
-        /*if (empty($where)) {
-            $where = '1=1';
-        }*/
         return array($where, $params);
     }
 

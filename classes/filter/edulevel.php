@@ -54,7 +54,7 @@ class edulevel extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $edulevels = $this->get_edulevel_list();
         $checkboxes = array();
         foreach ($edulevels as $key => $label) {

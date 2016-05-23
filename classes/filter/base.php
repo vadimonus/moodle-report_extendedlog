@@ -53,7 +53,7 @@ abstract class base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
 
     }
 
@@ -64,34 +64,17 @@ abstract class base {
      * @param array $files array of uploaded files "element_name"=>tmp_file_path
      * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
      */
-    public function validate_form_data($data, $files) {
-        return array();
-    }
-
-    /**
-     * Parse data returned from form.
-     *
-     * @param object $data Data returned from $form->get_data()
-     */
-    public function process_form_data($data) {
-
-    }
-
-    /**
-     * Returns array of request parameters, specific for this filter.
-     *
-     * @return array
-     */
-    public function get_page_params() {
+    public function validation_callback($data, $files) {
         return array();
     }
 
     /**
      * Returns sql where part and params.
      *
+     * @param array $data Form data or page paramenters as array
      * @return array($where, $params)
      */
-    public function get_sql() {
+    public function get_sql($data) {
         return array('', array());
     }
 

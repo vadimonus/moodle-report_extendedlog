@@ -40,7 +40,7 @@ class ip4 extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $mform->addElement('text', 'ip4', get_string('filter_ip4', 'report_extendedlog'));
         $mform->setType('ip4', PARAM_TEXT);
         $mform->addHelpButton('ip4', 'filter_ip4', 'report_extendedlog');

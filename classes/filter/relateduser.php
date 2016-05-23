@@ -71,7 +71,7 @@ class relateduser extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $users = $this->get_users_list();
         $mform->addElement('select', 'relateduser', get_string('filter_relateduser', 'report_extendedlog'), $users);
         $mform->setAdvanced('relateduser', $this->advanced);

@@ -44,7 +44,7 @@ class objecttable extends base {
         global $DB;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($tableslist = $cache->get('tables')) {
+        if ($tableslist = $cache->get('objecttables')) {
             return $tableslist;
         }
 
@@ -53,7 +53,7 @@ class objecttable extends base {
         $toptables = array('0' => get_string('filter_objecttable_all', 'report_extendedlog'));
         $tableslist = array_merge($toptables, $tableslist);
 
-        $cache->set('tables', $tableslist);
+        $cache->set('objecttables', $tableslist);
         return $tableslist;
     }
 
@@ -62,10 +62,27 @@ class objecttable extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $users = $this->get_tables_list();
         $mform->addElement('select', 'objecttable', get_string('filter_objecttable', 'report_extendedlog'), $users);
         $mform->setAdvanced('objecttable', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        if (!empty($data['objecttable'])) {
+            $where = 'objecttable = :objecttable';
+            $params = array('objecttable' => $data['objecttable']);
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

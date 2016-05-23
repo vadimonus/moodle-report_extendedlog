@@ -40,7 +40,7 @@ class useremail extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $mform->addElement('text', 'useremail', get_string('filter_useremail', 'report_extendedlog'));
         $mform->setType('useremail', PARAM_TEXT);
         $mform->setAdvanced('useremail', $this->advanced);

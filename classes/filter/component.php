@@ -26,7 +26,6 @@ namespace report_extendedlog\filter;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/report/eventlist/classes/list_generator.php");
 
 /**
  * Class for filtering by event's component.
@@ -104,45 +103,22 @@ class component extends base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public function add_filter_form_fields(&$mform) {
+    public function definition_callback(&$mform) {
         $components = $this->get_components_list();
         $mform->addElement('selectgroups', 'component', get_string('filter_component', 'report_extendedlog'), $components);
         $mform->setAdvanced('component', $this->advanced);
     }
 
     /**
-     * Parse data returned from form.
-     *
-     * @param object $data Data returned from $form->get_data()
-     */
-    public function process_form_data($data) {
-        $this->component = optional_param('component', '', PARAM_COMPONENT);
-    }
-
-    /**
-     * Returns array of request parameters, specific for this filter.
-     *
-     * @return array
-     */
-    public function get_page_params() {
-        $component = optional_param('component', '', PARAM_COMPONENT);
-        if (!empty($component)) {
-            $result = array('component' => $component);
-        } else {
-            $result = array();
-        }
-        return $result;
-    }
-
-    /**
      * Returns sql where part and params.
      *
+     * @param array $data Form data or page paramenters as array
      * @return array($where, $params)
      */
-    public function get_sql() {
-        if (!empty($this->component)) {
+    public function get_sql($data) {
+        if (!empty($data['component'])) {
             $where = 'component = :component';
-            $params = array('component' => $this->component);
+            $params = array('component' => $data['component']);
         } else {
             $where = '';
             $params = array();

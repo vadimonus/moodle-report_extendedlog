@@ -100,7 +100,9 @@ class logtable extends \report_log_table_log {
     }
 
     /**
-     * Prints table
+     * Prints table.
+     *
+     * @param int $perpage Items to show perpage
      */
     function show($perpage = 100) {
         $this->setup();

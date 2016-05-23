@@ -50,8 +50,12 @@ class category extends base {
             return $categories;
         }
 
-        $categories = \coursecat::make_categories_list();
-        $all = array(0 => get_string('filter_category_all', 'report_extendedlog'));
+        $categorieslist = \coursecat::make_categories_list();
+        $categories = array();
+        foreach ($categorieslist as $key => $name) {
+            $categories['a'.$key] = $name;
+        }
+        $all = array('a' => get_string('filter_category_all', 'report_extendedlog'));
         $categories = array_merge($all, $categories);
 
         $cache->set('categories', $categories);
@@ -59,6 +63,20 @@ class category extends base {
     }
 
     /**
+     * Return category search options.
+     *
+     * @return array list of users.
+     */
+    private function get_searchoptions() {
+        $searchoptions = array(
+            'category' => get_string('filter_category_options_category', 'report_extendedlog'),
+            'categories' => get_string('filter_category_options_subcategories', 'report_extendedlog'),
+            'courses' => get_string('filter_category_options_courses', 'report_extendedlog'),
+        );
+        return $searchoptions;
+    }
+
+/**
      * Adds controls specific to this condition in the filter form.
      *
      * @param \MoodleQuickForm $mform Filter form
@@ -67,8 +85,60 @@ class category extends base {
         $categories = $this->get_categories_list();
         $mform->addElement('select', 'category', get_string('filter_category', 'report_extendedlog'), $categories);
         $mform->setAdvanced('category', $this->advanced);
-        $mform->addElement('checkbox', 'category_sub', get_string('filter_category_sub', 'report_extendedlog'));
-        $mform->setAdvanced('category_sub', $this->advanced);
+        $options = $this->get_searchoptions();
+        $mform->addElement('select', 'categoryoptions', get_string('filter_category_options', 'report_extendedlog'), $options);
+        $mform->setAdvanced('categoryoptions', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        global $DB;
+
+        $where = '';
+        $params = array();
+        if (empty($data['category'])) {
+            return array($where, $params);
+        }
+        $category = substr($data['category'], 1);
+        if (empty($category)) {
+            return array($where, $params);
+        }
+
+        $context = \context_coursecat::instance($category);
+        $contexts = array($context->id);
+        if (!empty($data['categoryoptions'])) {
+            switch ($data['categoryoptions']) {
+                case 'categories':
+                    $contexts = array($context->id);
+                    $path = $context->path;
+                    $contextwhere = 'path LIKE :path AND contextlevel = :contextlevel';
+                    $contextparams = array('path' => $context->path.'/%', 'contextlevel' => CONTEXT_COURSECAT);
+                    $subcontexts = $DB->get_records_select('context', $contextwhere, $contextparams);
+                    foreach ($subcontexts as $subcontext) {
+                        $contexts[] = $subcontext->id;
+                    }
+                    break;
+                case 'courses':
+                    $contexts = array($context->id);
+                    $path = $context->path;
+                    $contextwhere = 'path LIKE :path';
+                    $contextparams = array('path' => $context->path.'/%');
+                    $subcontexts = $DB->get_records_select('context', $contextwhere, $contextparams);
+                    foreach ($subcontexts as $subcontext) {
+                        $contexts[] = $subcontext->id;
+                    }
+                    break;
+            }
+        }
+
+        list($where, $params) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'contextid');
+        $where = 'contextid ' . $where;
+        return array($where, $params);
     }
 
 }

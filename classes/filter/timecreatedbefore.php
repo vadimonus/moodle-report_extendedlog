@@ -46,4 +46,21 @@ class timecreatedbefore extends base {
         $mform->setAdvanced('timecreatedbefore', $this->advanced);
     }
 
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        if (!empty($data['timecreatedbefore']) && is_int($data['timecreatedbefore'])) {
+            $where = 'timecreated <= :timecreatedbefore';
+            $params = array('timecreatedbefore' => $data['timecreatedbefore']);
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
+    }
+
 }

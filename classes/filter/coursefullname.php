@@ -41,7 +41,7 @@ class coursefullname extends base {
      * @return array list of users.
      */
     private function get_coursefullnames_list() {
-        global $DB, $SITE;
+        global $DB;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($coursefullnames = $cache->get('coursefullnames')) {
@@ -51,15 +51,16 @@ class coursefullname extends base {
         $courses = $DB->get_records('course', array(), 'fullname', 'id,fullname');
         $coursefullnames = array();
         foreach ($courses as $course) {
-            $coursefullnames[$course->id] = $course->fullname;
+            // Using string keys to prevent problems on sorting
+            $coursefullnames['a'.$course->id] = $course->fullname;
         }
-        $sitename = $coursefullnames[$SITE->id];
-        unset($coursefullnames[$SITE->id]);
+        $sitename = $coursefullnames['a'.SITEID];
+        unset($coursefullnames['a'.SITEID]);
         \core_collator::asort($coursefullnames);
 
         $topcourses = array(
-            0 => get_string('filter_coursefullname_all', 'report_extendedlog'),
-            $SITE->id => $sitename);
+            'a' => get_string('filter_coursefullname_all', 'report_extendedlog'),
+            'a'.SITEID => $sitename);
         $coursefullnames = array_merge($topcourses, $coursefullnames);
 
         $cache->set('coursefullnames', $coursefullnames);
@@ -75,6 +76,27 @@ class coursefullname extends base {
         $coursefullnames = $this->get_coursefullnames_list();
         $mform->addElement('select', 'coursefullname', get_string('filter_coursefullname', 'report_extendedlog'), $coursefullnames);
         $mform->setAdvanced('coursefullname', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        $where = '';
+        $params = array();
+        if (empty($data['coursefullname'])) {
+            return array($where, $params);
+        }
+        $course = substr($data['coursefullname'], 1);
+        if (empty($course)) {
+            return array($where, $params);
+        }
+        $where = 'courseid = :coursefullname';
+        $params = array('coursefullname' => $course);
+        return array($where, $params);
     }
 
 }

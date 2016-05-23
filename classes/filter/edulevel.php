@@ -38,7 +38,7 @@ class edulevel extends base {
     /**
      * Return crud values.
      *
-     * @return array list of users.
+     * @return array list of edulevels.
      */
     private function get_edulevel_list() {
         $edulevellist = array(
@@ -62,6 +62,29 @@ class edulevel extends base {
         }
         $mform->addGroup($checkboxes, 'edulevel', get_string('filter_edulevel', 'report_extendedlog'), ' ', true);
         $mform->setAdvanced('edulevel', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        global $DB;
+        // If 3 items are selected, it means no filter needed.
+        if (!empty($data['edulevel']) && count($data['edulevel'] != 3)) {
+            $crud = array();
+            foreach ($data['edulevel'] as $key => $value) {
+                $crud[] = $key;
+            }
+            list($where, $params) = $DB->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'edulevel');
+            $where = 'edulevel ' . $where;
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

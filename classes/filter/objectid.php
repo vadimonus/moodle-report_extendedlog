@@ -42,8 +42,40 @@ class objectid extends base {
      */
     public function definition_callback(&$mform) {
         $mform->addElement('text', 'objectid', get_string('filter_objectid', 'report_extendedlog'));
-        $mform->setType('objectid', PARAM_INT);
+        $mform->setType('objectid', PARAM_TEXT);
         $mform->setAdvanced('objectid', $this->advanced);
+    }
+
+    /**
+     * Validates form data.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
+     */
+    public function validation_callback($data, $files) {
+        $errors = array();
+        if ($data['objectid'] !== '' && !is_number($data['objectid'])) {
+            $errors['objectid'] = get_string('filter_objectid_error', 'report_extendedlog');
+        }
+        return $errors;
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        if ($data['objectid'] !== '' && is_number($data['objectid'])) {
+            $where = 'objectid = :objectid';
+            $params = array('objectid' => $data['objectid']);
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

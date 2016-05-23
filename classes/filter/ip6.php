@@ -47,4 +47,32 @@ class ip6 extends base {
         $mform->setAdvanced('ip6', $this->advanced);
     }
 
+    /**
+     * Returns sql where part and params.
+     * Subnet strings can be only in full format xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx (full IPv6 address)
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        global $DB;
+
+        $where = '';
+        $params = array();
+        if (empty($data['ip6'])) {
+            return array($where, $params);
+        }
+
+        $subnets = explode(',', $data['ip6']);
+        foreach ($subnets as $key => $subnet) {
+            $subnets[$key] = trim($subnet);
+            if ($subnet === '') {
+                unset($subnets[$key]);
+            }
+        }
+        list($where, $params) = $DB->get_in_or_equal($subnets, SQL_PARAMS_NAMED, 'ip6in');
+        $where = 'ip ' . $where;
+        return array($where, $params);
+    }
+
 }

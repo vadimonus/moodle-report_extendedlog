@@ -41,7 +41,7 @@ class courseshortname extends base {
      * @return array list of users.
      */
     private function get_courseshortnames_list() {
-        global $DB, $SITE;
+        global $DB;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($courseshortnames = $cache->get('courseshortnames')) {
@@ -51,15 +51,16 @@ class courseshortname extends base {
         $courses = $DB->get_records('course', array(), 'shortname', 'id,shortname');
         $courseshortnames = array();
         foreach ($courses as $course) {
-            $courseshortnames[$course->id] = $course->shortname;
+            // Using string keys to prevent problems on sorting
+            $courseshortnames['a'.$course->id] = $course->shortname;
         }
-        $sitename = $courseshortnames[$SITE->id];
-        unset($courseshortnames[$SITE->id]);
+        $sitename = $courseshortnames['a'.SITEID];
+        unset($courseshortnames['a'.SITEID]);
         \core_collator::asort($courseshortnames);
 
         $topcourses = array(
-            0 => get_string('filter_courseshortname_all', 'report_extendedlog'),
-            $SITE->id => $sitename);
+            'a' => get_string('filter_courseshortname_all', 'report_extendedlog'),
+            'a'.SITEID => $sitename);
         $courseshortnames = array_merge($topcourses, $courseshortnames);
 
         $cache->set('courseshortnames', $courseshortnames);
@@ -75,6 +76,27 @@ class courseshortname extends base {
         $courseshortnames = $this->get_courseshortnames_list();
         $mform->addElement('select', 'courseshortname', get_string('filter_courseshortname', 'report_extendedlog'), $courseshortnames);
         $mform->setAdvanced('courseshortname', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        $where = '';
+        $params = array();
+        if (empty($data['courseshortname'])) {
+            return array($where, $params);
+        }
+        $course = substr($data['courseshortname'], 1);
+        if (empty($course)) {
+            return array($where, $params);
+        }
+        $where = 'courseid = :courseshortname';
+        $params = array('courseshortname' => $course);
+        return array($where, $params);
     }
 
 }

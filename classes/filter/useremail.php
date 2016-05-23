@@ -46,4 +46,31 @@ class useremail extends base {
         $mform->setAdvanced('useremail', $this->advanced);
     }
 
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        global $DB;
+
+        if (!empty($data['useremail'])) {
+            $where = $DB->sql_like('email', ":email", false, false);
+            $params = array('email' => '%' . $DB->sql_like_escape($data['useremail']) . '%');
+            $users = $DB->get_fieldset_select('user', 'id', $where, $params);
+            if (!empty($users)) {
+                list($where, $params) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'useremail');
+                $where = 'userid ' . $where;
+            } else {
+                $where = '1=0';
+                $params = array();
+            }
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
+    }
+
 }

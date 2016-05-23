@@ -42,7 +42,6 @@ class origin extends base {
      */
     private function get_origin_list() {
         $originlist = array(
-            'all' => get_string('filter_origin_all', 'report_extendedlog'),
             'web' => get_string('filter_origin_web', 'report_extendedlog'),
             'cli' => get_string('filter_origin_cli', 'report_extendedlog'),
         );
@@ -56,8 +55,35 @@ class origin extends base {
      */
     public function definition_callback(&$mform) {
         $origins = $this->get_origin_list();
-        $mform->addElement('select', 'origin', get_string('filter_origin', 'report_extendedlog'), $origins);
+        $checkboxes = array();
+        foreach ($origins as $key => $label) {
+            $checkboxes[] = $mform->createElement('checkbox', $key, '', $label);
+        }
+        $mform->addGroup($checkboxes, 'origin', get_string('filter_origin', 'report_extendedlog'), ' ', true);
         $mform->setAdvanced('origin', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        global $DB;
+        // If 2 items are selected, it means no filter needed.
+        if (!empty($data['origin']) && count($data['origin'] != 2)) {
+            $crud = array();
+            foreach ($data['origin'] as $key => $value) {
+                $crud[] = $key;
+            }
+            list($where, $params) = $DB->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'origin');
+            $where = 'origin ' . $where;
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

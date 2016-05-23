@@ -50,7 +50,7 @@ class objecttable extends base {
 
         $tableslist = $DB->get_tables();
         \core_collator::asort($tableslist);
-        $toptables = array('0' => get_string('filter_objecttable_all', 'report_extendedlog'));
+        $toptables = array(0 => get_string('filter_objecttable_all', 'report_extendedlog'));
         $tableslist = array_merge($toptables, $tableslist);
 
         $cache->set('objecttables', $tableslist);

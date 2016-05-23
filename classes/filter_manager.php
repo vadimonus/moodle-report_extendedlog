@@ -116,4 +116,29 @@ class filter_manager {
         return array($where, $params);
     }
 
+    /**
+     * Convert array values from form to strings, to avoid moodle_url error.
+     *
+     * @param array $params Params from form
+     * @return array
+     */
+    public function fix_array_params($params) {
+        $badparams = array();
+        $newparams = array();
+        foreach ($params as $name => $param) {
+            if (is_array($param)) {
+                $badparams[] = $name;
+                foreach ($param as $key => $value) {
+                    $fullname = $name . '[' . $key . ']';
+                    $newparams[$fullname] = $value;
+                }
+            }
+        }
+        foreach ($badparams as $name) {
+            unset($params[$name]);
+        }
+        $params = array_merge($params, $newparams);
+        return $params;
+    }
+
 }

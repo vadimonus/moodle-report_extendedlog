@@ -53,13 +53,14 @@ class relateduser extends base {
         $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
         $usernames = array();
         foreach ($users as $user) {
-            $usernames[$user->id] = fullname($user);
+            // Using string keys to prevent problems on sorting
+            $usernames['a'.$user->id] = fullname($user);
         }
-        unset($usernames[$CFG->siteguest]);
+        unset($usernames['a'.$CFG->siteguest]);
         \core_collator::asort($usernames);
         $topusers = array(
-            0 => get_string('filter_user_all', 'report_extendedlog'),
-            $CFG->siteguest => get_string('guestuser'));
+            'a' => get_string('filter_user_all', 'report_extendedlog'),
+            'a'.$CFG->siteguest => get_string('guestuser'));
         $usernames = array_merge($topusers, $usernames);
 
         $cache->set('relatedusers', $usernames);
@@ -75,6 +76,27 @@ class relateduser extends base {
         $users = $this->get_users_list();
         $mform->addElement('select', 'relateduser', get_string('filter_relateduser', 'report_extendedlog'), $users);
         $mform->setAdvanced('relateduser', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        $where = '';
+        $params = array();
+        if (empty($data['relateduser'])) {
+            return array($where, $params);
+        }
+        $user = substr($data['relateduser'], 1);
+        if (empty($user)) {
+            return array($where, $params);
+        }
+        $where = 'relateduserid = :relateduser';
+        $params = array('relateduser' => $user);
+        return array($where, $params);
     }
 
 }

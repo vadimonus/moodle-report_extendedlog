@@ -38,7 +38,7 @@ class crud extends base {
     /**
      * Return crud values.
      *
-     * @return array list of users.
+     * @return array list of actions.
      */
     private function get_crud_list() {
         $crudlist = array(
@@ -63,6 +63,29 @@ class crud extends base {
         }
         $mform->addGroup($checkboxes, 'crud', get_string('filter_crud', 'report_extendedlog'), ' ', true);
         $mform->setAdvanced('crud', $this->advanced);
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @param array $data Form data or page paramenters as array
+     * @return array($where, $params)
+     */
+    public function get_sql($data) {
+        global $DB;
+        // If 4 items are selected, it means no filter needed.
+        if (!empty($data['crud']) && count($data['crud'] != 4)) {
+            $crud = array();
+            foreach ($data['crud'] as $key => $value) {
+                $crud[] = $key;
+            }
+            list($where, $params) = $DB->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'crud');
+            $where = 'crud ' . $where;
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

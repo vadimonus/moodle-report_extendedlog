@@ -55,7 +55,8 @@ if ($filterform->is_submitted() && $pageparams = $filterform->get_page_params())
 
         // Table for printing log records.
         $logtable = new \report_extendedlog\logtable($logreader, $where, $params);
-        $logtable->define_baseurl(new moodle_url($url, $pageparams));
+        $fixedparams = $filter_manager->fix_array_params($pageparams);
+        $logtable->define_baseurl(new moodle_url($url, $fixedparams));
         $logtable->is_downloadable(true);
         $logtable->show_download_buttons_at(array(TABLE_P_BOTTOM));
 

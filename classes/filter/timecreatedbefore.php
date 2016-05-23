@@ -41,7 +41,8 @@ class timecreatedbefore extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $mform->addElement('date_time_selector', 'timecreatedbefore', get_string('filter_timecreatedbefore', 'report_extendedlog'));
+        $mform->addElement('date_time_selector', 'timecreatedbefore', get_string('filter_timecreatedbefore', 'report_extendedlog'),
+                array('optional' => true, 'step' => 1));
         $mform->setAdvanced('timecreatedbefore', $this->advanced);
     }
 

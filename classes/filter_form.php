@@ -23,7 +23,6 @@
  */
 
 namespace report_extendedlog;
-use get_string;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,23 +53,41 @@ class filter_form extends \moodleform {
         $mform->addElement('select', 'logreader', get_string('logstore', 'report_extendedlog'), $logreaders);
 
         $mform->addElement('header', 'filter', get_string('filterheader', 'report_extendedlog'));
-        $filter_manager = $this->_customdata['filter_manager'];
-        $filter_manager->add_filter_form_fields($mform);
 
-        /*$mform->disable_form_change_checker();
-        $componentarray = $this->_customdata['components'];
-        $edulevelarray = $this->_customdata['edulevel'];
-        $crudarray = $this->_customdata['crud'];
+        $filtermanager = $this->_customdata['filter_manager'];
+        $filtermanager->add_filter_form_fields($mform);
 
-        $mform->addElement('header', 'displayinfo', get_string('filter', 'report_eventlist'));
-
-        $mform->addElement('text', 'eventname', get_string('name', 'report_eventlist'));
-        $mform->setType('eventname', PARAM_RAW);
-
-        $mform->addElement('select', 'eventcomponent', get_string('component', 'report_eventlist'), $componentarray);
-        $mform->addElement('select', 'eventedulevel', get_string('edulevel', 'report_eventlist'), $edulevelarray);
-        $mform->addElement('select', 'eventcrud', get_string('crud', 'report_eventlist'), $crudarray);*/
-
-        $this->add_action_buttons(true);
+        $this->add_action_buttons(false, get_string('showlogs', 'report_extendedlog'));
     }
+
+    /**
+     * Form validation method.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
+     */
+    public function validation($data, $files) {
+        $parenterrors = parent::validation($data, $files);
+
+        $filtermanager = $this->_customdata['filter_manager'];
+        $filterserrors = $filtermanager->validate_form_data($data, $files);
+
+        return array_merge($parenterrors, $filterserrors);
+    }
+
+    /**
+     * Returns all form paramenters to use with paginator
+     *
+     * @return array
+     */
+    public function get_page_params() {
+        $mform =& $this->_form;
+        if (!$this->is_cancelled() and $this->is_submitted() and $this->is_validated()) {
+            return $mform->exportValues();
+        } else {
+            return array();
+        }
+    }
+
 }

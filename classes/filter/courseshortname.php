@@ -45,7 +45,7 @@ class courseshortname extends base {
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($courseshortnames = $cache->get('courseshortnames')) {
-            //return $courseshortnames;
+            return $courseshortnames;
         }
 
         $courses = $DB->get_records('course', array(), 'shortname', 'id,shortname');

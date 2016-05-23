@@ -37,6 +37,9 @@ require_once("$CFG->dirroot/report/eventlist/classes/list_generator.php");
  */
 class component extends base {
 
+    /** @var string */
+    protected $component;
+
     /**
      * Traverse plugins folders and searches plugins.
      *
@@ -105,6 +108,46 @@ class component extends base {
         $components = $this->get_components_list();
         $mform->addElement('selectgroups', 'component', get_string('filter_component', 'report_extendedlog'), $components);
         $mform->setAdvanced('component', $this->advanced);
+    }
+
+    /**
+     * Parse data returned from form.
+     *
+     * @param object $data Data returned from $form->get_data()
+     */
+    public function process_form_data($data) {
+        $this->component = optional_param('component', '', PARAM_COMPONENT);
+    }
+
+    /**
+     * Returns array of request parameters, specific for this filter.
+     *
+     * @return array
+     */
+    public function get_page_params() {
+        $component = optional_param('component', '', PARAM_COMPONENT);
+        if (!empty($component)) {
+            $result = array('component' => $component);
+        } else {
+            $result = array();
+        }
+        return $result;
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @return array($where, $params)
+     */
+    public function get_sql() {
+        if (!empty($this->component)) {
+            $where = 'component = :component';
+            $params = array('component' => $this->component);
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

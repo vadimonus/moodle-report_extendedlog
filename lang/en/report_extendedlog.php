@@ -22,11 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//$string['eventcomponent'] = 'Component';
-//$string['eventcontext'] = 'Event context';
-//$string['eventloggedas'] = '{$a->realusername} as {$a->asusername}';
-//$string['eventorigin'] = 'Origin';
-//$string['eventrelatedfullnameuser'] = 'Affected user';
 $string['logstore'] = 'Log store';
 $string['notificationhighload'] = '<div style="text-align: center; margin: 10px;">Attention! This report uses non-optimesed database queries. They may take a long time and produce high database load.</div>';
 $string['filterheader'] = 'Filter';
@@ -65,16 +60,10 @@ $string['filter_relateduser'] = 'Affected user';
 $string['filter_timecreatedafter'] = 'Event took place after';
 $string['filter_timecreatedbefore'] = 'Event took place before';
 $string['filter_user'] = 'User';
-$string['filter_useremail'] = 'User\'s email part';
+$string['filter_useremail'] = 'User\'s email substring';
 $string['filter_user_all'] = 'All users';
 $string['eventreportviewed'] = 'Extended log search report viewed';
 $string['extendedlog:view'] = 'View extended log search report';
 $string['navigationnode'] = 'Extended log search';
-//$string['page'] = 'Page {$a}';
-//$string['logsformat'] = 'Logs format';
-//$string['nologreaderenabled'] = 'No log reader enabled';
-//$string['page-report-log-x'] = 'Any log report';
-//$string['page-report-log-index'] = 'Course log report';
-//$string['page-report-log-user'] = 'User course log report';
 $string['pluginname'] = 'Extended log search';
-//$string['selectlogreader'] = 'Select log reader';
+$string['showlogs'] = 'Show events';

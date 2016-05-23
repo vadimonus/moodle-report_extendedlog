@@ -24,12 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$url = new moodle_url('/report/extendedlog/index.php');
+$ADMIN->add('reports', new admin_externalpage('reportextendedlog', get_string('navigationnode', 'report_extendedlog'),
+    $url, 'report/extendedlog:view'));
 
-if ($hassiteconfig) {
-    $url = new moodle_url('/report/extendedlog/index.php');
-    $ADMIN->add('reports', new admin_externalpage('reportextendedlog', get_string('navigationnode', 'report_extendedlog'),
-        $url, 'report/extendedlog:view'));
-
-    // No report settings.
-    $settings = null;
-}
+// No report settings.
+$settings = null;

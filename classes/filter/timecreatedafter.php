@@ -41,7 +41,8 @@ class timecreatedafter extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function add_filter_form_fields(&$mform) {
-        $mform->addElement('date_time_selector', 'timecreatedafter', get_string('filter_timecreatedafter', 'report_extendedlog'));
+        $mform->addElement('date_time_selector', 'timecreatedafter', get_string('filter_timecreatedafter', 'report_extendedlog'),
+                array('optional' => true, 'step' => 1));
         $mform->setAdvanced('timecreatedafter', $this->advanced);
     }
 

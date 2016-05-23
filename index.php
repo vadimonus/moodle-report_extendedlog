@@ -23,6 +23,15 @@
  */
 
 require('../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
+
+require_login();
+require_capability('report/extendedlog:view', context_system::instance());
+
+//$page = optional_param('page', '0', PARAM_INT); // Which page to show.
+$perpage = optional_param('perpage', '100', PARAM_INT); // How many per page.
+$logformat = optional_param('download', '', PARAM_ALPHA);
+
 //require_once($CFG->dirroot.'/course/lib.php');
 //require_once($CFG->dirroot.'/report/extendedlog/locallib.php');
 //require_once($CFG->libdir.'/adminlib.php');
@@ -34,8 +43,6 @@ require('../../config.php');
 //$date        = optional_param('date', 0, PARAM_INT); // Date to display.
 //$modid       = optional_param('modid', 0, PARAM_ALPHANUMEXT); // Module id or 'site_errors'.
 //$modaction   = optional_param('modaction', '', PARAM_ALPHAEXT); // An action as recorded in the logs.
-//$page        = optional_param('page', '0', PARAM_INT);     // Which page to show.
-//$perpage     = optional_param('perpage', '100', PARAM_INT); // How many per page.
 //$showcourses = optional_param('showcourses', false, PARAM_BOOL); // Whether to show courses if we're over our limit.
 //$showusers   = optional_param('showusers', false, PARAM_BOOL); // Whether to show users if we're over our limit.
 //$chooselog   = optional_param('chooselog', false, PARAM_BOOL);
@@ -186,23 +193,53 @@ require('../../config.php');
 require_login();
 
 $context = context_system::instance();
-require_capability('report/extendedlog:view', context_system::instance());
+require_capability('report/extendedlog:view', $context);
 
 $url = new moodle_url('/report/extendedlog/index.php');
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
 $PAGE->set_context($context);
+admin_externalpage_setup('reportextendedlog', '', null, '', array('pagelayout' => 'report'));
 $PAGE->set_title(get_string('navigationnode', 'report_extendedlog'));
 $PAGE->set_heading(get_string('navigationnode', 'report_extendedlog'));
 
-//$outputrenderer = $PAGE->get_renderer('report_log');
-
 $filter_manager = new \report_extendedlog\filter_manager();
-$filterform = new \report_extendedlog\filter_form($url, array('filter_manager' => $filter_manager));
+$filterform = new \report_extendedlog\filter_form($url, array('filter_manager' => $filter_manager), 'get');
+//$pageparams = $filter_manager->get_page_params();
+//$filterform->set_data($pageparams);
+
+
+if ($filterform->is_submitted() && $pageparams = $filterform->get_page_params()) {
+    if (!empty($pageparams['logreader'])) {
+        //$formdata = $pageparams;
+        // Create logreader.
+        $manager = get_log_manager();
+        $readers = $manager->get_readers();
+        $logreader = $readers[$pageparams['logreader']];
+        // Create sql parameters.
+        $filter_manager->process_form_data($pageparams);
+        list($where, $params) = $filter_manager->get_sql();
+        // Table for printing log records.
+        $logtable = new \report_extendedlog\logtable($logreader, $where, $params);
+        $logtable->define_baseurl(new moodle_url($url, $pageparams));
+        $logtable->is_downloadable(true);
+        $logtable->show_download_buttons_at(array(TABLE_P_BOTTOM));
+
+        $logformat = optional_param('download', '', PARAM_TEXT);
+        if (!empty($logformat)) {
+            \core\session\manager::write_close();
+            $logtable->download($logformat);
+        } else {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(get_string('navigationnode', 'report_extendedlog'));
+            $filterform->display();
+            $logtable->show($perpage);
+            echo $OUTPUT->footer();
+            die();
+        }
+    }
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('navigationnode', 'report_extendedlog'));
 $filterform->display();
 echo $OUTPUT->footer();
-
-

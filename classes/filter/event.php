@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class event extends base {
 
+    /** @var string */
+    protected $event;
+
     /**
      * Returns list of plugins events.
      *
@@ -180,7 +183,7 @@ class event extends base {
     public function get_events_list() {
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($eventslist = $cache->get('events')) {
-            return $eventslist;
+            //return $eventslist;
         }
 
         $pluginevents = $this->get_plugin_events();
@@ -206,7 +209,7 @@ class event extends base {
 
         $allevents = array(
             get_string('filter_event_all', 'report_extendedlog') =>
-                array('all' => get_string('filter_event_all', 'report_extendedlog')));
+                array(0 => get_string('filter_event_all', 'report_extendedlog')));
         $eventslist = array_merge($allevents, $coreeventslist, $plugineventslist);
 
         $cache->set('events', $eventslist);
@@ -222,6 +225,46 @@ class event extends base {
         $events = $this->get_events_list();
         $mform->addElement('selectgroups', 'event', get_string('filter_event', 'report_extendedlog'), $events);
         $mform->setAdvanced('event', $this->advanced);
+    }
+
+    /**
+     * Parse data returned from form.
+     *
+     * @param object $data Data returned from $form->get_data()
+     */
+    public function process_form_data($data) {
+        $this->event = optional_param('event', '', PARAM_TEXT);
+    }
+
+    /**
+     * Returns array of request parameters, specific for this filter.
+     *
+     * @return array
+     */
+    public function get_page_params() {
+        $event = optional_param('event', '', PARAM_TEXT);
+        if (!empty($event)) {
+            $result = array('event' => $event);
+        } else {
+            $result = array();
+        }
+        return $result;
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @return array($where, $params)
+     */
+    public function get_sql() {
+        if (!empty($this->event)) {
+            $where = 'eventname = :eventname';
+            $params = array('eventname' => $this->event);
+        } else {
+            $where = '';
+            $params = array();
+        }
+        return array($where, $params);
     }
 
 }

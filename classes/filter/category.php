@@ -47,7 +47,7 @@ class category extends base {
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($categories = $cache->get('categories')) {
-            //return $categories;
+            return $categories;
         }
 
         $categories = \coursecat::make_categories_list();

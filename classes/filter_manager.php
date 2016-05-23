@@ -80,4 +80,72 @@ class filter_manager {
         }
     }
 
+    /**
+     * Parse data returned from form.
+     *
+     * @param object $data Data returned from $form->get_data()
+     */
+    public function process_form_data($data) {
+        foreach ($this->filters as $filter) {
+            $filter->process_form_data($data);
+        }
+    }
+
+    /**
+     * Validates form data.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
+     */
+    public function validate_form_data($data, $files) {
+        $errors = array();
+        foreach ($this->filters as $filter) {
+            $filtererrors = $filter->validate_form_data($data, $files);
+            $errors = array_merge($errors, $filtererrors);
+        }
+        return $errors;
+    }
+
+    /**
+     * Returns array of request parameters, specific for filters.
+     *
+     * @return array
+     */
+    public function get_page_params() {
+        $params = array();
+        foreach ($this->filters as $filter) {
+            $filterparams = $filter->get_page_params();
+            $params = array_merge($params, $filterparams);
+        }
+
+        $logreader = optional_param('logreader', '', PARAM_COMPONENT);
+        if (!empty($logreader)) {
+            $params['logreader'] = $logreader;
+        }
+        return $params;
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @return array($where, $params)
+     */
+    public function get_sql() {
+        $wherearray = array();
+        $params = array();
+        foreach ($this->filters as $filter) {
+            list($filterwhere, $filterparams) = $filter->get_sql();
+            if (!empty($filterwhere)) {
+                $wherearray[] = $filterwhere;
+                $params = array_merge($params, $filterparams);
+            }
+        }
+        $where = implode(' AND ', $wherearray);
+        /*if (empty($where)) {
+            $where = '1=1';
+        }*/
+        return array($where, $params);
+    }
+
 }

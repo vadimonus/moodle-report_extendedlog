@@ -45,7 +45,7 @@ class objecttable extends base {
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($tableslist = $cache->get('tables')) {
-            //return $tableslist ;
+            return $tableslist;
         }
 
         $tableslist = $DB->get_tables();

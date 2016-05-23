@@ -53,40 +53,46 @@ abstract class base {
      *
      * @param \MoodleQuickForm $mform Filter form
      */
-    public abstract function add_filter_form_fields(&$mform);
+    public function add_filter_form_fields(&$mform) {
+
+    }
 
     /**
-     * Return an SQL fragment to be ANDed into the WHERE clause to filter which questions are shown.
+     * Validates form data.
      *
-     * @return string SQL fragment. Must use named parameters.
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
      */
-    //public abstract function where();
-
-    /**
-     * Return parameters to be bound to the above WHERE clause fragment.
-     *
-     * @return array parameter name => value.
-     */
-    /*public function params() {
+    public function validate_form_data($data, $files) {
         return array();
-    }*/
-
+    }
 
     /**
-     * Returns the condition to be used with SQL where
-     * @param array $data filter settings
-     * @return array sql string and $params
-     */
-    //public abstract function get_sql_filter($data);
-
-        /**
-    }
-     * Display GUI for selecting criteria for this condition. Displayed always, whether Show More is open or not.
+     * Parse data returned from form.
      *
-     * Compare display_options_adv(), which displays when Show More is open.
-     * @return string HTML form fragment
+     * @param object $data Data returned from $form->get_data()
      */
-    public function display_options() {
-        return;
+    public function process_form_data($data) {
+
     }
+
+    /**
+     * Returns array of request parameters, specific for this filter.
+     *
+     * @return array
+     */
+    public function get_page_params() {
+        return array();
+    }
+
+    /**
+     * Returns sql where part and params.
+     *
+     * @return array($where, $params)
+     */
+    public function get_sql() {
+        return array('', array());
+    }
+
 }

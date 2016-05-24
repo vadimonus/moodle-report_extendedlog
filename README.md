@@ -20,8 +20,10 @@ following:
 - Find failed logons for users using some email domain
 - And so on
 
-This report uses non-optimized db queries and
-This report supports logstore_standart and logstore_database. 
+This report supports logstore_standart and logstore_database.
+
+This report generates non-optimized db queries and may produce wery high database load.
+
 
 Author
 ------
@@ -30,7 +32,7 @@ Author
 Links
 -----
 - Updates: https://moodle.org/plugins/view.php?plugin=report_extendedlog
-- Latest code: https://github.com/vadimonus/moodle-lreport_extendedlog
+- Latest code: https://github.com/vadimonus/moodle-report_extendedlog
 
 Changes
 -------

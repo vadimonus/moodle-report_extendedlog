@@ -68,17 +68,17 @@ class edulevel extends base {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
-        global $DB;
+    public function get_sql($data, $db) {
         // If 3 items are selected, it means no filter needed.
         if (!empty($data['edulevel']) && count($data['edulevel'] != 3)) {
             $crud = array();
             foreach ($data['edulevel'] as $key => $value) {
                 $crud[] = $key;
             }
-            list($where, $params) = $DB->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'edulevel');
+            list($where, $params) = $db->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'edulevel');
             $where = 'edulevel ' . $where;
         } else {
             $where = '';

@@ -50,9 +50,10 @@ class useremail extends base {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
+    public function get_sql($data, $db) {
         global $DB;
 
         if (!empty($data['useremail'])) {
@@ -62,7 +63,7 @@ class useremail extends base {
             $params['deleted'] = 0;
             $users = $DB->get_fieldset_select('user', 'id', $where, $params);
             if (!empty($users)) {
-                list($where, $params) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'useremail');
+                list($where, $params) = $db->get_in_or_equal($users, SQL_PARAMS_NAMED, 'useremail');
                 $where = 'userid ' . $where;
             } else {
                 $where = '1=0';

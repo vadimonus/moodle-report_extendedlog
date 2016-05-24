@@ -100,13 +100,24 @@ class filter_manager {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \core\log\reader $logreader Selected logreader
      * @return array($where, $params)
      */
-    public function get_sql($data) {
+    public function get_sql($data, $logreader) {
+        global $DB;
+
         $wherearray = array();
+        $where = array();
         $params = array();
+        if ($logreader instanceof \logstore_standard\log\store) {
+            $db = $DB;
+        } else if ($logreader instanceof \logstore_database\log\store) {
+            $db = $logreader->get_extdb();
+        } else {
+            return array($where, $params);
+        }
         foreach ($this->filters as $filter) {
-            list($filterwhere, $filterparams) = $filter->get_sql($data);
+            list($filterwhere, $filterparams) = $filter->get_sql($data, $db);
             if (!empty($filterwhere)) {
                 $wherearray[] = $filterwhere;
                 $params = array_merge($params, $filterparams);

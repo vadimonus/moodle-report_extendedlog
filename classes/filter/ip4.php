@@ -61,11 +61,10 @@ class ip4 extends base {
      * 2: xxx.xxx or xxx.xxx. (partial address)
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
-        global $DB;
-
+    public function get_sql($data, $db) {
         $where = '';
         $params = array();
         if (empty($data['ip4'])) {
@@ -90,7 +89,7 @@ class ip4 extends base {
         $conditions = array();
         $conditionsparams = array();
         if (!empty($this->addressesin)) {
-            list($inwhere, $inparams) = $DB->get_in_or_equal($this->addressesin, SQL_PARAMS_NAMED, 'ip4in');
+            list($inwhere, $inparams) = $db->get_in_or_equal($this->addressesin, SQL_PARAMS_NAMED, 'ip4in');
             $inwhere = 'ip ' . $inwhere;
             $conditions[] = $inwhere;
             $conditionsparams = $inparams;
@@ -98,7 +97,7 @@ class ip4 extends base {
         $i = 1;
         foreach ($this->addresseslike as $subnet) {
             $paramname = 'ip4like' . $i;
-            $conditions[] = $DB->sql_like('ip', ':'.$paramname);
+            $conditions[] = $db->sql_like('ip', ':'.$paramname);
             $conditionsparams[$paramname] = $subnet;
             $i++;
         }

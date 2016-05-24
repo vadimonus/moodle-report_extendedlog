@@ -50,9 +50,10 @@ class timecreatedbefore extends base {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
+    public function get_sql($data, $db) {
         if (!empty($data['timecreatedbefore']) && is_int($data['timecreatedbefore'])) {
             $where = 'timecreated <= :timecreatedbefore';
             $params = array('timecreatedbefore' => $data['timecreatedbefore']);

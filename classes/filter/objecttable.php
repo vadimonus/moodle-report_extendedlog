@@ -72,9 +72,10 @@ class objecttable extends base {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
+    public function get_sql($data, $db) {
         if (!empty($data['objecttable'])) {
             $where = 'objecttable = :objecttable';
             $params = array('objecttable' => $data['objecttable']);

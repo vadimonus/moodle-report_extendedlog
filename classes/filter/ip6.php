@@ -52,11 +52,10 @@ class ip6 extends base {
      * Subnet strings can be only in full format xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx (full IPv6 address)
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
-        global $DB;
-
+    public function get_sql($data, $db) {
         $where = '';
         $params = array();
         if (empty($data['ip6'])) {
@@ -70,7 +69,7 @@ class ip6 extends base {
                 unset($subnets[$key]);
             }
         }
-        list($where, $params) = $DB->get_in_or_equal($subnets, SQL_PARAMS_NAMED, 'ip6in');
+        list($where, $params) = $db->get_in_or_equal($subnets, SQL_PARAMS_NAMED, 'ip6in');
         $where = 'ip ' . $where;
         return array($where, $params);
     }

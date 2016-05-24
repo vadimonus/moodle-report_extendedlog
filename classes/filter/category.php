@@ -94,9 +94,10 @@ class category extends base {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
+    public function get_sql($data, $db) {
         global $DB;
 
         $where = '';
@@ -136,7 +137,7 @@ class category extends base {
             }
         }
 
-        list($where, $params) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'contextid');
+        list($where, $params) = $db->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'contextid');
         $where = 'contextid ' . $where;
         return array($where, $params);
     }

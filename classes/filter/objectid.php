@@ -65,9 +65,10 @@ class objectid extends base {
      * Returns sql where part and params.
      *
      * @param array $data Form data or page paramenters as array
+     * @param \moodle_database $db Database instance for creating proper sql
      * @return array($where, $params)
      */
-    public function get_sql($data) {
+    public function get_sql($data, $db) {
         if ($data['objectid'] !== '' && is_number($data['objectid'])) {
             $where = 'objectid = :objectid';
             $params = array('objectid' => $data['objectid']);

@@ -51,7 +51,7 @@ if ($filterform->is_submitted() && $pageparams = $filterform->get_page_params())
         $logreader = $readers[$pageparams['logreader']];
 
         // Get sql parameters.
-        list($where, $params) = $filtermanager->get_sql($pageparams);
+        list($where, $params) = $filtermanager->get_sql($pageparams, $logreader);
 
         // Table for printing log records.
         $logtable = new \report_extendedlog\logtable($logreader, $where, $params);

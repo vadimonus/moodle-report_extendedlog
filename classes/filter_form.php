@@ -46,9 +46,9 @@ class filter_form extends \moodleform {
 
         $mform->addElement('html', get_string('notificationhighload', 'report_extendedlog'));
 
-        $logreaders = get_log_manager()->get_readers('core\log\sql_reader');
+        $logreaders = get_log_manager()->get_supported_logstores('report_extendedlog');
         foreach ($logreaders as $pluginname => $logreader) {
-            $logreaders[$pluginname] = $logreader->get_name();
+            $logreaders[$pluginname] = $logreader;
         }
         $mform->addElement('select', 'logreader', get_string('logstore', 'report_extendedlog'), $logreaders);
 

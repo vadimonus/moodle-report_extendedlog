@@ -55,13 +55,17 @@ if ($filterform->is_submitted() && $pageparams = $filterform->get_page_params())
 
         // Table for printing log records.
         $logtable = new \report_extendedlog\logtable($logreader, $where, $params);
-        $fixedparams = $filtermanager->fix_array_params($pageparams);
+        $fixedparams = \report_extendedlog\filter_manager::fix_array_params($pageparams);
         $logtable->define_baseurl(new moodle_url($url, $fixedparams));
         $logtable->is_downloadable(true);
         $logtable->show_download_buttons_at(array(TABLE_P_BOTTOM));
 
         // Logging report viewing.
-        $eventdata = array('context' => $context, 'other' => $pageparams);
+        $logparams = $pageparams;
+        unset($logparams['submitbutton']);
+        unset($logparams['sesskey']);
+        unset($logparams['_qf__report_extendedlog_filter_form']);
+        $eventdata = array('context' => $context, 'other' => $logparams);
         $event = \report_extendedlog\event\report_viewed::create($eventdata);
         $event->trigger();
 

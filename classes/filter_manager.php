@@ -132,7 +132,7 @@ class filter_manager {
      * @param array $params Params from form
      * @return array
      */
-    public function fix_array_params($params) {
+    public static function fix_array_params($params) {
         $badparams = array();
         $newparams = array();
         foreach ($params as $name => $param) {

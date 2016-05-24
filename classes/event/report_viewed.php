@@ -80,7 +80,12 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/report/extendedlog/index.php');
+        $params = $this->data['other'];
+        $params['sesskey'] = sesskey();
+        $params['_qf__report_extendedlog_filter_form'] = 1;
+        $params['submitbutton'] = get_string('showlogs', 'report_extendedlog');
+        $params = \report_extendedlog\filter_manager::fix_array_params($params);
+        return new \moodle_url('/report/extendedlog/index.php', $params);
     }
 
 }

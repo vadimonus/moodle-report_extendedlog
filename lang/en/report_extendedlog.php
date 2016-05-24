@@ -23,7 +23,7 @@
  */
 
 $string['logstore'] = 'Log store';
-$string['notificationhighload'] = '<div style="text-align: center; margin: 10px;">Attention! This report uses non-optimesed database queries. They may take a long time and produce high database load.</div>';
+$string['notificationhighload'] = '<div style="text-align: center; margin: 10px;">Attention! This report uses non-optimised database queries. They may take a long time and produce high database load.<br/>It is highly recomended to specify time interval to speedup query.</div>';
 $string['filterheader'] = 'Filter';
 $string['filter_category'] = 'Course category';
 $string['filter_category_all'] = 'All categories';

@@ -42,7 +42,14 @@ $string['filter_component_grouptemplate'] = '{$a->typedisplaynameplural} ({$a->t
 $string['filter_component_template'] = '{$a->displayname} ({$a->name})';
 $string['filter_crud'] = 'Action';
 $string['filter_ip4'] = 'IPv4 address';
-$string['filter_ip4_help'] = '<p>Specify comma-separated list of partial or full IP addresses.</p><p>Examples:</p><ul><li>192.168.10.1</li><li>192.168.</li><li>231.3.56.10-20</li><li>192.168.10.1,192.168.,231.3.56.10-20</li></ul>';
+$string['filter_ip4_help'] = 'Specify comma-separated list of partial or full IP addresses.
+
+Examples:
+
+* 192.168.10.1
+* 192.168.
+* 231.3.56.10-20
+* 192.168.10.1,192.168.,231.3.56.10-20';
 $string['filter_ip6'] = 'IPv6 address';
 $string['filter_ip6_help'] = 'Specify comma-separated list of full IP addresses.';
 $string['filter_edulevel'] = 'Educational level';
@@ -66,6 +73,6 @@ $string['filter_useremail'] = 'User\'s email substring';
 $string['filter_user_all'] = 'All users';
 $string['logstore'] = 'Log store';
 $string['navigationnode'] = 'Extended log search';
-$string['notificationhighload'] = '<div style="text-align: center; margin: 10px;">Attention! This report uses non-optimised database queries. They may take a long time and produce high database load.<br/>It is highly recomended to specify time interval to speedup query.</div>';
+$string['notificationhighload'] = 'Attention! This report uses non-optimised database queries. They may take a long time and produce high database load.<br/>It is highly recomended to specify time interval to speedup query.';
 $string['pluginname'] = 'Extended log search';
 $string['showlogs'] = 'Show events';

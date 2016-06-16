@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'report_extendedlog';
-$plugin->version   = 2016052402;
-$plugin->release = '1.0';
+$plugin->version   = 2016061600;
+$plugin->release = '1.0.1';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires  = 2015051100; // Moodle 2.9.

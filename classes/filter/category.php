@@ -26,7 +26,9 @@ namespace report_extendedlog\filter;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/coursecatlib.php');
+if ($CFG->version < 2018120300.00) { // Moodle 3.6.
+    require_once($CFG->libdir . '/coursecatlib.php');
+}
 
 /**
  * Class for filtering by category.
@@ -43,14 +45,18 @@ class category extends base {
      * @return array list of users.
      */
     private function get_categories_list() {
-        global $DB;
+        global $CFG;
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($categories = $cache->get('categories')) {
             return $categories;
         }
 
-        $categorieslist = \coursecat::make_categories_list();
+        if ($CFG->version < 2018120300.00) { // Moodle 3.6.
+            $categorieslist = \coursecat::make_categories_list();
+        } else {
+            $categorieslist = \core_course_category::make_categories_list();
+        }
         $categories = array();
         foreach ($categorieslist as $key => $name) {
             $categories['a'.$key] = $name;

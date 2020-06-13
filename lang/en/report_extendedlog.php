@@ -75,4 +75,5 @@ $string['logstore'] = 'Log store';
 $string['navigationnode'] = 'Extended log search';
 $string['notificationhighload'] = 'Attention! This report uses non-optimised database queries. They may take a long time and produce high database load.<br/>It is highly recomended to specify time interval to speedup query.';
 $string['pluginname'] = 'Extended log search';
+$string['privacy:metadata'] = 'The plugin does not store any personal data.';
 $string['showlogs'] = 'Show events';

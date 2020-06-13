@@ -14,6 +14,7 @@ Usage
 This report is intended to be used only by the site administrator for investigation in number of cases, 
 when standard log report does not allow to find the desired events. With this report you can easily do
 following:
+
 - Find out, who have granted role to user in some category a month ago
 - List changes that were done on site by users from some IP or subnet
 - Get events that happened in all courses in some category in one list

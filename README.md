@@ -36,5 +36,8 @@ Links
 
 Changes
 -------
-Release 1.0 (build 2016052402):
-- First public release.
+- Release 1.0 (build 2016052402):
+    - First public release.
+- Release 1.1 (build 2020061300):
+    - Privacy API support.
+    - Fixes for deprecated coursecatlib

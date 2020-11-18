@@ -117,6 +117,8 @@ class logtable extends \report_log_table_log {
      * @param string $logformat
      */
     public function download($logformat) {
+        \core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_HUGE);
         $filename = 'logs_' . userdate(time(), get_string('backupnameformat', 'langconfig'), 99, false);
         $this->is_downloading($logformat, $filename);
         $this->setup();

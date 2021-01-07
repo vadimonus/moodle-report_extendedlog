@@ -115,6 +115,9 @@ class logtable extends \report_log_table_log {
      * @param string $logformat
      */
     public function download($logformat) {
+        // No need to raise execution time, as it's increased in \table_dataformat_export_format::__construct().
+        // Giving extra memory limit. Not using HUGE or UNLIMITED, as this page may be used by multiple users at same time.
+        raise_memory_limit(MEMORY_EXTRA);
         $filename = 'logs_' . userdate(time(), get_string('backupnameformat', 'langconfig'), 99, false);
         $this->is_downloading($logformat, $filename);
         $this->setup();

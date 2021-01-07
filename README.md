@@ -42,3 +42,5 @@ Changes
 - Release 1.1 (build 2020061300):
     - Privacy API support.
     - Fixes for deprecated coursecatlib
+- Release 1.1.1 (build 2021010700):
+    - Improvements for long queries. Raise memory limit, do not query logs twice to fetch user names.

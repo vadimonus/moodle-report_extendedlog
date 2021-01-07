@@ -46,6 +46,9 @@ class logtable extends \report_log_table_log {
     /** @var array */
     protected $params;
 
+    /** @var array */
+    protected $userfullnamesoverride = array();
+
     /**
      * Constructor
      *
@@ -83,12 +86,8 @@ class logtable extends \report_log_table_log {
             $this->pageable(false);
         }
 
-        // Get the users data.
-        $this->rawdata = $this->logreader->get_events_select_iterator($this->where, $this->params,
-            'timecreated DESC', $this->get_page_start(), $this->get_page_size());
-        $this->update_users_used();
-
-        // We need to take it second time, as update_users_used closes iterator.
+        // Do not call $this->update_users_used() to prefetch user names, because it requires to query logs twice.
+        // Multiple indexed requests to user table are much cheaper than second unindexed request to logs.
         $this->rawdata = $this->logreader->get_events_select_iterator($this->where, $this->params,
             'timecreated DESC', $this->get_page_start(), $this->get_page_size());
 
@@ -96,7 +95,6 @@ class logtable extends \report_log_table_log {
         if ($useinitialsbar && !$this->is_downloading()) {
             $this->initialbars($total > $pagesize);
         }
-
     }
 
     /**
@@ -123,5 +121,93 @@ class logtable extends \report_log_table_log {
         $this->query_db(null, false);
         $this->build_table();
         $this->finish_output();
+    }
+
+    /**
+     * Gets the user full name.
+     *
+     * Original function form report_log_table_log class has error - it calls get_records_sql() instead
+     * of get_record_sql(). This is fixed version of this function. Using $this->userfullnamesoverride as
+     * $this->userfullnames is declared private.
+     *
+     * @since Moodle 2.9
+     * @param int $userid
+     * @return string|false
+     */
+    protected function get_user_fullname($userid) {
+        global $DB;
+
+        if (empty($userid)) {
+            return false;
+        }
+
+        if (!empty($this->userfullnamesoverride[$userid])) {
+            return $this->userfullnamesoverride[$userid];
+        }
+
+        // We already looked for the user and it does not exist.
+        if ($this->userfullnamesoverride[$userid] === false) {
+            return false;
+        }
+
+        // If we reach that point new users logs have been generated since the last users db query.
+        list($usql, $uparams) = $DB->get_in_or_equal($userid);
+        $sql = "SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql;
+        if (!$user = $DB->get_record_sql($sql, $uparams)) {
+            return false;
+        }
+
+        $this->userfullnamesoverride[$userid] = fullname($user);
+        return $this->userfullnamesoverride[$userid];
+    }
+
+    /**
+     * Helper function to create list of user fullnames shown in log report.
+     *
+     * get_user_fullname function was overridden to use $this->userfullnamesoverride,
+     * so we override this function to use this property too, in case we need this function
+     * some day.
+     *
+     * @since   Moodle 2.9
+     * @return  void
+     */
+    protected function update_users_used() {
+        global $DB;
+
+        $this->userfullnamesoverride = array();
+        $userids = array();
+
+        // For each event cache full username.
+        // Get list of userids which will be shown in log report.
+        foreach ($this->rawdata as $event) {
+            $logextra = $event->get_logextra();
+            if (!empty($event->userid) && empty($userids[$event->userid])) {
+                $userids[$event->userid] = $event->userid;
+            }
+            if (!empty($logextra['realuserid']) && empty($userids[$logextra['realuserid']])) {
+                $userids[$logextra['realuserid']] = $logextra['realuserid'];
+            }
+            if (!empty($event->relateduserid) && empty($userids[$event->relateduserid])) {
+                $userids[$event->relateduserid] = $event->relateduserid;
+            }
+        }
+        $this->rawdata->close();
+
+        // Get user fullname and put that in return list.
+        if (!empty($userids)) {
+            list($usql, $uparams) = $DB->get_in_or_equal($userids);
+            $users = $DB->get_records_sql("SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql,
+                $uparams);
+            foreach ($users as $userid => $user) {
+                $this->userfullnamesoverride[$userid] = fullname($user);
+                unset($userids[$userid]);
+            }
+
+            // We fill the array with false values for the users that don't exist anymore
+            // in the database so we don't need to query the db again later.
+            foreach ($userids as $userid) {
+                $this->userfullnamesoverride[$userid] = false;
+            }
+        }
     }
 }

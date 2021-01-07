@@ -44,3 +44,5 @@ Changes
     - Fixes for deprecated coursecatlib
 - Release 1.1.1 (build 2021010700):
     - Improvements for long queries. Raise memory limit, do not query logs twice to fetch user names.
+- Release 1.1.2 (build 2021010701):
+    - Privacy provider fix.

@@ -27,55 +27,40 @@ namespace report_extendedlog\filter;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for filtering by course fullname.
+ * Class for filtering by course.
  *
  * @package    report_extendedlog
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class coursefullname extends base {
-
-    /**
-     * Return list of users.
-     *
-     * @return array list of users.
-     */
-    private function get_coursefullnames_list() {
-        global $DB;
-
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($coursefullnames = $cache->get('coursefullnames')) {
-            return $coursefullnames;
-        }
-
-        $courses = $DB->get_records('course', array(), 'fullname', 'id,fullname');
-        $coursefullnames = array();
-        foreach ($courses as $course) {
-            // Using string keys to prevent problems on sorting.
-            $coursefullnames['a'.$course->id] = $course->fullname;
-        }
-        $sitename = $coursefullnames['a'.SITEID];
-        unset($coursefullnames['a'.SITEID]);
-        \core_collator::asort($coursefullnames);
-
-        $topcourses = array(
-            'a' => get_string('filter_coursefullname_all', 'report_extendedlog'),
-            'a'.SITEID => $sitename);
-        $coursefullnames = array_merge($topcourses, $coursefullnames);
-
-        $cache->set('coursefullnames', $coursefullnames);
-        return $coursefullnames;
-    }
-
+class course extends base {
     /**
      * Adds controls specific to this condition in the filter form.
      *
      * @param \MoodleQuickForm $mform Filter form
      */
     public function definition_callback(&$mform) {
-        $coursefullnames = $this->get_coursefullnames_list();
-        $mform->addElement('select', 'coursefullname', get_string('filter_coursefullname', 'report_extendedlog'), $coursefullnames);
-        $mform->setAdvanced('coursefullname', $this->advanced);
+        $options = [
+            'ajax' => 'report_extendedlog/autocomplete-course',
+            'multiple' => true,
+            'noselectionstring' => get_string('filter_course_all', 'report_extendedlog'),
+            'valuehtmlcallback' => function($value) {
+                global $DB;
+                $course = $DB->get_record('course', ['id' => $value], 'fullname, shortname');
+                if (!$course) {
+                    return false;
+                }
+                return get_string('filter_course_template', 'report_extendedlog', $course);
+            }
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'course',
+            get_string('filter_course', 'report_extendedlog'),
+            [],
+            $options
+        );
+        $mform->setAdvanced('course', $this->advanced);
     }
 
     /**
@@ -86,17 +71,18 @@ class coursefullname extends base {
      * @return array($where, $params)
      */
     public function get_sql($data, $db) {
+        global $DB;
         $where = '';
         $params = array();
-        if (empty($data['coursefullname'])) {
+        if (empty($data['course'])) {
             return array($where, $params);
         }
-        $course = substr($data['coursefullname'], 1);
-        if (empty($course)) {
-            return array($where, $params);
+        $courses = $data['course'];
+        if (!is_array($courses)) {
+            $courses = [$courses];
         }
-        $where = 'courseid = :coursefullname';
-        $params = array('coursefullname' => $course);
+        list($where, $params) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED, 'user');
+        $where = 'courseid ' . $where;
         return array($where, $params);
     }
 

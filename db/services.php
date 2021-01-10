@@ -34,6 +34,15 @@ $functions = [
         'capabilities'  => 'report/extendedlog:view',
         'loginrequired' => true,
     ],
+    'report_extendedlog_autocomplete_course' => [
+        'classname' => \report_extendedlog\autocomplete\course::class,
+        'methodname' => 'autocomplete',
+        'description' => 'Autocomplete for course field',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities'  => 'report/extendedlog:view',
+        'loginrequired' => true,
+    ],
     'report_extendedlog_autocomplete_user' => [
         'classname' => \report_extendedlog\autocomplete\user::class,
         'methodname' => 'autocomplete',

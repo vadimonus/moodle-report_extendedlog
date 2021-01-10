@@ -18,14 +18,20 @@
  * Report for extended log searching.
  *
  * @package    report_extendedlog
- * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @copyright  2021 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'report_extendedlog';
-$plugin->version   = 2021010701;
-$plugin->release = '2.0';
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->requires  = 2018051700; // Moodle 3.5.
+$functions = [
+    'report_extendedlog_autocomplete_user' => [
+        'classname' => \report_extendedlog\autocomplete\user::class,
+        'methodname' => 'autocomplete',
+        'description' => 'Autocomplete for user field',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities'  => 'report/extendedlog:view',
+        'loginrequired' => true,
+    ],
+];

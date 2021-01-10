@@ -36,45 +36,28 @@ defined('MOODLE_INTERNAL') || die();
 class user extends base {
 
     /**
-     * Return list of users.
-     *
-     * @return array list of users.
-     */
-    private function get_users_list() {
-        global $DB, $CFG;
-
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($usernames = $cache->get('users')) {
-            return $usernames;
-        }
-
-        $fields = get_all_user_name_fields(true);
-        $fields = "id,$fields";
-        $users = $DB->get_records('user', array('deleted' => '0'), '', $fields);
-        $usernames = array();
-        foreach ($users as $user) {
-            // Using string keys to prevent problems on sorting.
-            $usernames['a'.$user->id] = fullname($user);
-        }
-        unset($usernames['a'.$CFG->siteguest]);
-        \core_collator::asort($usernames);
-        $topusers = array(
-            'a' => get_string('filter_user_all', 'report_extendedlog'),
-            'a'.$CFG->siteguest => get_string('guestuser'));
-        $usernames = array_merge($topusers, $usernames);
-
-        $cache->set('users', $usernames);
-        return $usernames;
-    }
-
-    /**
      * Adds controls specific to this condition in the filter form.
      *
      * @param \MoodleQuickForm $mform Filter form
      */
     public function definition_callback(&$mform) {
-        $users = $this->get_users_list();
-        $mform->addElement('select', 'user', get_string('filter_user', 'report_extendedlog'), $users);
+        $options = [
+            'ajax' => 'report_extendedlog/autocomplete-user',
+            'multiple' => true,
+            'noselectionstring' => get_string('filter_user_all', 'report_extendedlog'),
+            'valuehtmlcallback' => function($value) {
+                $fields = 'id, ' . get_all_user_name_fields(true);
+                $user = \core_user::get_user($value, $fields);
+                return fullname($user);
+            }
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'user',
+            get_string('filter_user', 'report_extendedlog'),
+            [],
+            $options
+        );
         $mform->setAdvanced('user', $this->advanced);
     }
 
@@ -86,17 +69,18 @@ class user extends base {
      * @return array($where, $params)
      */
     public function get_sql($data, $db) {
+        global $DB;
         $where = '';
         $params = array();
         if (empty($data['user'])) {
             return array($where, $params);
         }
-        $user = substr($data['user'], 1);
-        if (empty($user)) {
-            return array($where, $params);
+        $users = $data['user'];
+        if (!is_array($users)) {
+            $users = [$users];
         }
-        $where = 'userid = :user';
-        $params = array('user' => $user);
+        list($where, $params) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
+        $where = 'userid ' . $where;
         return array($where, $params);
     }
 

@@ -149,7 +149,7 @@ class logtable extends \report_log_table_log {
         }
 
         // We already looked for the user and it does not exist.
-        if ($this->userfullnamesoverride[$userid] === false) {
+        if (isset($this->userfullnamesoverride[$userid]) && $this->userfullnamesoverride[$userid] === false) {
             return false;
         }
 

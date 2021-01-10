@@ -25,6 +25,15 @@
 defined('MOODLE_INTERNAL') || die;
 
 $functions = [
+    'report_extendedlog_autocomplete_category' => [
+        'classname' => \report_extendedlog\autocomplete\category::class,
+        'methodname' => 'autocomplete',
+        'description' => 'Autocomplete for category field',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities'  => 'report/extendedlog:view',
+        'loginrequired' => true,
+    ],
     'report_extendedlog_autocomplete_user' => [
         'classname' => \report_extendedlog\autocomplete\user::class,
         'methodname' => 'autocomplete',

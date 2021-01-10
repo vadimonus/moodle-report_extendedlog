@@ -26,10 +26,6 @@ namespace report_extendedlog\filter;
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($CFG->version < 2018120300.00) { // Moodle 3.6.
-    require_once($CFG->libdir . '/coursecatlib.php');
-}
-
 /**
  * Class for filtering by category.
  *
@@ -38,35 +34,6 @@ if ($CFG->version < 2018120300.00) { // Moodle 3.6.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class category extends base {
-
-    /**
-     * Return list of users.
-     *
-     * @return array list of users.
-     */
-    private function get_categories_list() {
-        global $CFG;
-
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
-        if ($categories = $cache->get('categories')) {
-            return $categories;
-        }
-
-        if ($CFG->version < 2018120300.00) { // Moodle 3.6.
-            $categorieslist = \coursecat::make_categories_list();
-        } else {
-            $categorieslist = \core_course_category::make_categories_list();
-        }
-        $categories = array();
-        foreach ($categorieslist as $key => $name) {
-            $categories['a'.$key] = $name;
-        }
-        $all = array('a' => get_string('filter_category_all', 'report_extendedlog'));
-        $categories = array_merge($all, $categories);
-
-        $cache->set('categories', $categories);
-        return $categories;
-    }
 
     /**
      * Return category search options.
@@ -88,9 +55,28 @@ class category extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function definition_callback(&$mform) {
-        $categories = $this->get_categories_list();
-        $mform->addElement('select', 'category', get_string('filter_category', 'report_extendedlog'), $categories);
+        $options = [
+            'ajax' => 'report_extendedlog/autocomplete-category',
+            'multiple' => false,
+            'noselectionstring' => get_string('filter_category_all', 'report_extendedlog'),
+            'valuehtmlcallback' => function($value) {
+                $list = \report_extendedlog\autocomplete\category::get_categories_list();
+                $key = 'a'.$value;
+                if (!isset($list[$key])) {
+                    return false;
+                }
+                return $list[$key];
+            }
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'category',
+            get_string('filter_category', 'report_extendedlog'),
+            [],
+            $options
+        );
         $mform->setAdvanced('category', $this->advanced);
+
         $options = $this->get_searchoptions();
         $mform->addElement('select', 'categoryoptions', get_string('filter_category_options', 'report_extendedlog'), $options);
         $mform->setAdvanced('categoryoptions', $this->advanced);
@@ -111,10 +97,7 @@ class category extends base {
         if (empty($data['category'])) {
             return array($where, $params);
         }
-        $category = substr($data['category'], 1);
-        if (empty($category)) {
-            return array($where, $params);
-        }
+        $category = $data['category'];
 
         $context = \context_coursecat::instance($category);
         $contexts = array($context->id);
@@ -122,7 +105,6 @@ class category extends base {
             switch ($data['categoryoptions']) {
                 case 'categories':
                     $contexts = array($context->id);
-                    $path = $context->path;
                     $contextwhere = 'path LIKE :path AND contextlevel = :contextlevel';
                     $contextparams = array('path' => $context->path.'/%', 'contextlevel' => CONTEXT_COURSECAT);
                     $subcontexts = $DB->get_records_select('context', $contextwhere, $contextparams);
@@ -132,7 +114,6 @@ class category extends base {
                     break;
                 case 'courses':
                     $contexts = array($context->id);
-                    $path = $context->path;
                     $contextwhere = 'path LIKE :path';
                     $contextparams = array('path' => $context->path.'/%');
                     $subcontexts = $DB->get_records_select('context', $contextwhere, $contextparams);

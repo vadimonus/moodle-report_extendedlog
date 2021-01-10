@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'report_extendedlog';
-$plugin->version   = 2021010702;
+$plugin->version   = 2021011000;
 $plugin->release = '2.0';
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_BETA;
 $plugin->requires  = 2018051700; // Moodle 3.5.

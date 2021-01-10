@@ -3,7 +3,7 @@ Moodle plugin for extended log searching
 
 Requirements
 ------------
-- Moodle 2.9 (build 2015051100) or later.
+- Moodle 3.5 (build 2018051700) or later.
 
 Installation
 ------------
@@ -46,3 +46,6 @@ Changes
     - Improvements for long queries. Raise memory limit, do not query logs twice to fetch user names.
 - Release 1.1.2 (build 2021010701):
     - Privacy provider fix.
+- Release 2.0 (build 2021011000):
+    - Autocomplete elements for user, relateduser, course, category, event.
+    - Ability to select multiple values for user, relateduser, course and event.

@@ -107,7 +107,6 @@ class eventname extends base {
      * @return array Full location of files from the specified directory.
      */
     private function get_events($directory, $plugin) {
-        global $CFG;
         $finaleventfiles = array();
         if (is_dir($directory)) {
             if ($handle = @opendir($directory)) {
@@ -186,30 +185,18 @@ class eventname extends base {
             return $eventslist;
         }
 
+        $eventslist = array();
         $pluginevents = $this->get_plugin_events();
-        $plugineventslist = array();
         foreach ($pluginevents as $event) {
-            $groupname = get_string('filter_event_grouptemplate', 'report_extendedlog', $event);
             $displayname = get_string('filter_event_template', 'report_extendedlog', $event);
-            $plugineventslist[$groupname][$event->name] = $displayname;
+            $eventslist[$event->name] = $displayname;
         }
-        foreach ($plugineventslist as $group => $events) {
-            \core_collator::asort($plugineventslist[$group]);
-        }
-        \core_collator::ksort($plugineventslist);
-
         $coreevents = $this->get_core_events();
-        $coreeventslist = array();
-        $groupname = get_string('filter_event_core', 'report_extendedlog');
         foreach ($coreevents as $event) {
             $displayname = get_string('filter_event_template', 'report_extendedlog', $event);
-            $coreeventslist[$groupname][$event->name] = $displayname;
+            $coreeventslist[$event->name] = $displayname;
         }
-        \core_collator::asort($coreeventslist[$groupname]);
-
-        $strall = get_string('filter_event_all', 'report_extendedlog');
-        $allevents = array($strall => array(0 => $strall));
-        $eventslist = array_merge($allevents, $coreeventslist, $plugineventslist);
+        \core_collator::asort($eventslist);
 
         $cache->set('eventnames', $eventslist);
         return $eventslist;
@@ -222,7 +209,17 @@ class eventname extends base {
      */
     public function definition_callback(&$mform) {
         $events = $this->get_events_list();
-        $mform->addElement('selectgroups', 'eventname', get_string('filter_event', 'report_extendedlog'), $events);
+        $options = [
+            'multiple' => true,
+            'noselectionstring' => get_string('filter_event_all', 'report_extendedlog'),
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'eventname',
+            get_string('filter_event', 'report_extendedlog'),
+            $events,
+            $options
+        );
         $mform->setAdvanced('eventname', $this->advanced);
     }
 
@@ -234,13 +231,18 @@ class eventname extends base {
      * @return array($where, $params)
      */
     public function get_sql($data, $db) {
-        if (!empty($data['eventname'])) {
-            $where = 'eventname = :eventname';
-            $params = array('eventname' => $data['eventname']);
-        } else {
-            $where = '';
-            $params = array();
+        global $DB;
+        $where = '';
+        $params = array();
+        if (empty($data['eventname'])) {
+            return array($where, $params);
         }
+        $eventnames = $data['eventname'];
+        if (!is_array($eventnames)) {
+            $eventnames = [$eventnames];
+        }
+        list($where, $params) = $DB->get_in_or_equal($eventnames, SQL_PARAMS_NAMED, 'eventname');
+        $where = 'eventname ' . $where;
         return array($where, $params);
     }
 

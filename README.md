@@ -47,5 +47,5 @@ Changes
 - Release 1.1.2 (build 2021010701):
     - Privacy provider fix.
 - Release 2.0 (build 2021011000):
-    - Autocomplete elements for user, relateduser, course, category, event.
-    - Ability to select multiple values for user, relateduser, course and event.
+    - Autocomplete elements for user, relateduser, course, category, event and objectable.
+    - Ability to select multiple values for user, relateduser, course, event and objectable.

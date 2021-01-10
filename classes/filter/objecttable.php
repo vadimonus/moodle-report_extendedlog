@@ -50,8 +50,6 @@ class objecttable extends base {
 
         $tableslist = $DB->get_tables();
         \core_collator::asort($tableslist);
-        $toptables = array(0 => get_string('filter_objecttable_all', 'report_extendedlog'));
-        $tableslist = array_merge($toptables, $tableslist);
 
         $cache->set('objecttables', $tableslist);
         return $tableslist;
@@ -63,8 +61,18 @@ class objecttable extends base {
      * @param \MoodleQuickForm $mform Filter form
      */
     public function definition_callback(&$mform) {
-        $users = $this->get_tables_list();
-        $mform->addElement('select', 'objecttable', get_string('filter_objecttable', 'report_extendedlog'), $users);
+        $tables = $this->get_tables_list();
+        $options = [
+            'multiple' => true,
+            'noselectionstring' => get_string('filter_objecttable_all', 'report_extendedlog'),
+        ];
+        $mform->addElement(
+            'autocomplete',
+            'objecttable',
+            get_string('filter_objecttable', 'report_extendedlog'),
+            $tables,
+            $options
+        );
         $mform->setAdvanced('objecttable', $this->advanced);
     }
 
@@ -76,13 +84,18 @@ class objecttable extends base {
      * @return array($where, $params)
      */
     public function get_sql($data, $db) {
-        if (!empty($data['objecttable'])) {
-            $where = 'objecttable = :objecttable';
-            $params = array('objecttable' => $data['objecttable']);
-        } else {
-            $where = '';
-            $params = array();
+        global $DB;
+        $where = '';
+        $params = array();
+        if (empty($data['objecttable'])) {
+            return array($where, $params);
         }
+        $objecttables = $data['objecttable'];
+        if (!is_array($objecttables)) {
+            $objecttables = [$objecttables];
+        }
+        list($where, $params) = $DB->get_in_or_equal($objecttables, SQL_PARAMS_NAMED, 'objecttable');
+        $where = 'objecttable ' . $where;
         return array($where, $params);
     }
 

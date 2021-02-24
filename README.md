@@ -49,3 +49,5 @@ Changes
 - Release 2.0 (build 2021011000):
     - Autocomplete elements for user, relateduser, course, category, event and objectable.
     - Ability to select multiple values for user, relateduser, course, event and objectable.
+- Release 2.0.1 (build 2021022400):
+    - Fixed bug with missing core events in eventname filter.

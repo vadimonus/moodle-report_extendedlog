@@ -80,7 +80,6 @@ class eventname extends base {
     private function get_core_events() {
         global $CFG;
 
-        $pluginman = \core_plugin_manager::instance();
         $eventslist = array();
         $eventsdirectory = "$CFG->libdir/classes/event";
         $events = $this->get_events($eventsdirectory, 'core');
@@ -194,7 +193,7 @@ class eventname extends base {
         $coreevents = $this->get_core_events();
         foreach ($coreevents as $event) {
             $displayname = get_string('filter_event_template', 'report_extendedlog', $event);
-            $coreeventslist[$event->name] = $displayname;
+            $eventslist[$event->name] = $displayname;
         }
         \core_collator::asort($eventslist);
 

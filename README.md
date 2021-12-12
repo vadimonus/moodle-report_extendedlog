@@ -51,3 +51,5 @@ Changes
     - Ability to select multiple values for user, relateduser, course, event and objectable.
 - Release 2.0.1 (build 2021022400):
     - Fixed bug with missing core events in eventname filter.
+- Release 2.0.2 (build 2021121301):
+    - Fixed warning with crud, edulevel and origin filters.

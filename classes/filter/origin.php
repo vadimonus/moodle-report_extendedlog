@@ -73,11 +73,11 @@ class origin extends base {
     public function get_sql($data, $db) {
         // If 2 items are selected, it means no filter needed.
         if (!empty($data['origin']) && count($data['origin']) != 2) {
-            $crud = array();
+            $origins = array();
             foreach ($data['origin'] as $key => $value) {
-                $crud[] = $key;
+                $origins[] = $key;
             }
-            list($where, $params) = $db->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'origin');
+            list($where, $params) = $db->get_in_or_equal($origins, SQL_PARAMS_NAMED, 'origin');
             $where = 'origin ' . $where;
         } else {
             $where = '';

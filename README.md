@@ -9,6 +9,10 @@ Installation
 ------------
 Copy the extendedlog folder into your Moodle /report directory and visit your Admin Notification page to complete the installation.
 
+Notice! Plugin versions 2.x will not work correctly on Moodle versions 3.5-3.7 if $CFG->cachejs=false.
+That is common limitation for Moodle versions prior to 3.8, when working with ES6 modules,
+required for Moodle 3.8 and later. Set $CFG->cachejs=true, or use version 1.x of plugin.
+
 Usage
 -----
 This report is intended to be used only by the site administrator for investigation in number of cases, 
@@ -23,8 +27,7 @@ following:
 
 This report supports logstore_standart and logstore_database.
 
-This report generates non-optimized db queries and may produce wery high database load.
-
+This report generates non-optimized db queries and may produce very high database load.
 
 Author
 ------
@@ -53,3 +56,5 @@ Changes
     - Fixed bug with missing core events in eventname filter.
 - Release 2.0.2 (build 2021121301):
     - Fixed warning with crud, edulevel and origin filters.
+- Release 2.0.3 (build 2021121302):
+    - Fix dmlreadexception on theme More with Postgresql.

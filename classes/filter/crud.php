@@ -74,7 +74,7 @@ class crud extends base {
      */
     public function get_sql($data, $db) {
         // If 4 items are selected, it means no filter needed.
-        if (!empty($data['crud']) && count($data['crud'] != 4)) {
+        if (!empty($data['crud']) && count($data['crud']) != 4) {
             $crud = array();
             foreach ($data['crud'] as $key => $value) {
                 $crud[] = $key;

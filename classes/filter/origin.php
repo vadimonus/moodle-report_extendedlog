@@ -72,7 +72,7 @@ class origin extends base {
      */
     public function get_sql($data, $db) {
         // If 2 items are selected, it means no filter needed.
-        if (!empty($data['origin']) && count($data['origin'] != 2)) {
+        if (!empty($data['origin']) && count($data['origin']) != 2) {
             $crud = array();
             foreach ($data['origin'] as $key => $value) {
                 $crud[] = $key;

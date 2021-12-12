@@ -74,11 +74,11 @@ class edulevel extends base {
     public function get_sql($data, $db) {
         // If 3 items are selected, it means no filter needed.
         if (!empty($data['edulevel']) && count($data['edulevel']) != 3) {
-            $crud = array();
+            $edulevels = array();
             foreach ($data['edulevel'] as $key => $value) {
-                $crud[] = $key;
+                $edulevels[] = $key;
             }
-            list($where, $params) = $db->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'edulevel');
+            list($where, $params) = $db->get_in_or_equal($edulevels, SQL_PARAMS_NAMED, 'edulevel');
             $where = 'edulevel ' . $where;
         } else {
             $where = '';

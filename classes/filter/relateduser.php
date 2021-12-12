@@ -46,6 +46,9 @@ class relateduser extends base {
             'multiple' => true,
             'noselectionstring' => get_string('filter_user_all', 'report_extendedlog'),
             'valuehtmlcallback' => function($value) {
+                if ($value === '_qf__force_multiselect_submission') { // Fix for old themes like More.
+                    return false;
+                }
                 $fields = 'id, ' . get_all_user_name_fields(true);
                 $user = \core_user::get_user($value, $fields);
                 return fullname($user);

@@ -60,6 +60,9 @@ class category extends base {
             'multiple' => false,
             'noselectionstring' => get_string('filter_category_all', 'report_extendedlog'),
             'valuehtmlcallback' => function($value) {
+                if ($value === '_qf__force_multiselect_submission') { // Fix for old themes like More.
+                    return false;
+                }
                 $list = \report_extendedlog\autocomplete\category::get_categories_list();
                 $key = 'a'.$value;
                 if (!isset($list[$key])) {

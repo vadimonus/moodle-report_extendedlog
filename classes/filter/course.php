@@ -46,6 +46,9 @@ class course extends base {
             'noselectionstring' => get_string('filter_course_all', 'report_extendedlog'),
             'valuehtmlcallback' => function($value) {
                 global $DB;
+                if ($value === '_qf__force_multiselect_submission') { // Fix for old themes like More.
+                    return false;
+                }
                 $course = $DB->get_record('course', ['id' => $value], 'fullname, shortname');
                 if (!$course) {
                     return false;

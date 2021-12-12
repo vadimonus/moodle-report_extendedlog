@@ -73,7 +73,7 @@ class edulevel extends base {
      */
     public function get_sql($data, $db) {
         // If 3 items are selected, it means no filter needed.
-        if (!empty($data['edulevel']) && count($data['edulevel'] != 3)) {
+        if (!empty($data['edulevel']) && count($data['edulevel']) != 3) {
             $crud = array();
             foreach ($data['edulevel'] as $key => $value) {
                 $crud[] = $key;

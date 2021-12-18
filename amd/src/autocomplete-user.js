@@ -18,7 +18,6 @@
  *
  * @module report_extendedlog/autocomplete-user
  * @class autocomplete-user
- * @package report_extendedlog
  * @copyright 2021 Vadim Dvorovenko
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

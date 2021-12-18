@@ -18,7 +18,6 @@
  *
  * @module report_extendedlog/autocomplete-course
  * @class autocomplete-course
- * @package report_extendedlog
  * @copyright 2021 Vadim Dvorovenko
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

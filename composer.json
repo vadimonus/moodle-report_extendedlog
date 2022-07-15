@@ -1,0 +1,13 @@
+{
+    "name": "vadimonus-report/extendedlog",
+    "type": "moodle-report",
+    "require": {
+        "composer/installers": "^2.1"
+    },
+    "authors": [
+        {
+            "name": "Vadim Dvorovenko",
+            "email": "vadimon@mail.ru"
+        }
+    ]
+}

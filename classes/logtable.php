@@ -24,6 +24,9 @@
 
 namespace report_extendedlog;
 
+use core_user\fields;
+use report_log_table_log;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/tablelib.php");
@@ -35,7 +38,7 @@ require_once("$CFG->libdir/tablelib.php");
  * @copyright  2016 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class logtable extends \report_log_table_log {
+class logtable extends report_log_table_log {
 
     /** @var \core\log\sql_reader */
     protected $logreader;
@@ -133,12 +136,20 @@ class logtable extends \report_log_table_log {
      * of get_record_sql(). This is fixed version of this function. Using $this->userfullnamesoverride as
      * $this->userfullnames is declared private.
      *
+     * Original function was fixed in 3.11.3.
+     * Keeping function to support previous versions.
+     * Calling original function to reflect its changes in newer versions.
+     *
      * @since Moodle 2.9
      * @param int $userid
      * @return string|false
      */
     protected function get_user_fullname($userid) {
-        global $DB;
+        global $CFG, $DB;
+
+        if ($CFG->version >= 2021051703.00) { // Moodle 3.11.3.
+            return report_log_table_log::get_user_fullname($userid);
+        }
 
         if (empty($userid)) {
             return false;
@@ -153,9 +164,15 @@ class logtable extends \report_log_table_log {
             return false;
         }
 
+        if ($CFG->version < 2021051700.00) { // Moodle 3.11.
+            $fields = 'id, ' . get_all_user_name_fields(true);
+        } else {
+            $userfieldsapi = fields::for_name();
+            $fields = 'id' . $userfieldsapi->get_sql()->selects;
+        }
         // If we reach that point new users logs have been generated since the last users db query.
         list($usql, $uparams) = $DB->get_in_or_equal($userid);
-        $sql = "SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql;
+        $sql = "SELECT $fields FROM {user} WHERE id " . $usql;
         if (!$user = $DB->get_record_sql($sql, $uparams)) {
             return false;
         }
@@ -171,11 +188,20 @@ class logtable extends \report_log_table_log {
      * so we override this function to use this property too, in case we need this function
      * some day.
      *
+     * Original get_user_fullname function was fixed in 3.11.3.
+     * Keeping function to support previous versions.
+     * Calling original function to reflect its changes in newer versions.
+     *
      * @since   Moodle 2.9
      * @return  void
      */
     protected function update_users_used() {
         global $DB;
+
+        if ($CFG->version >= 2021051703.00) { // Moodle 3.11.3.
+            report_log_table_log::update_users_used();
+            return;
+        }
 
         $this->userfullnamesoverride = array();
         $userids = array();
@@ -198,9 +224,14 @@ class logtable extends \report_log_table_log {
 
         // Get user fullname and put that in return list.
         if (!empty($userids)) {
+            if ($CFG->version < 2021051700.00) { // Moodle 3.11.
+                $fields = 'id, ' . get_all_user_name_fields(true);
+            } else {
+                $userfieldsapi = fields::for_name();
+                $fields = 'id' . $userfieldsapi->get_sql()->selects;
+            }
             list($usql, $uparams) = $DB->get_in_or_equal($userids);
-            $users = $DB->get_records_sql("SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql,
-                $uparams);
+            $users = $DB->get_records_sql("SELECT id $fields FROM {user} WHERE id " . $usql, $uparams);
             foreach ($users as $userid => $user) {
                 $this->userfullnamesoverride[$userid] = fullname($user);
                 unset($userids[$userid]);

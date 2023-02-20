@@ -24,6 +24,8 @@
 
 namespace report_extendedlog\filter;
 
+use core_user;
+use core_user\fields;
 
 /**
  * Class for filtering by user.
@@ -45,11 +47,17 @@ class user extends base {
             'multiple' => true,
             'noselectionstring' => get_string('filter_user_all', 'report_extendedlog'),
             'valuehtmlcallback' => function($value) {
+                global $CFG;
                 if ($value === '_qf__force_multiselect_submission') { // Fix for old themes like More.
                     return false;
                 }
-                $fields = 'id, ' . get_all_user_name_fields(true);
-                $user = \core_user::get_user($value, $fields);
+                if ($CFG->version < 2021051700.00) { // Moodle 3.11.
+                    $fields = 'id, ' . get_all_user_name_fields(true);
+                } else {
+                    $userfieldsapi = fields::for_name();
+                    $fields = 'id' . $userfieldsapi->get_sql()->selects;
+                }
+                $user = core_user::get_user($value, $fields);
                 return fullname($user);
             }
         ];
@@ -85,5 +93,4 @@ class user extends base {
         $where = 'userid ' . $where;
         return array($where, $params);
     }
-
 }

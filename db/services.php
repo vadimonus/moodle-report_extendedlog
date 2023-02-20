@@ -31,7 +31,7 @@ $functions = [
         'description' => 'Autocomplete for category field',
         'type' => 'read',
         'ajax' => true,
-        'capabilities'  => 'report/extendedlog:view',
+        'capabilities' => 'report/extendedlog:view',
         'loginrequired' => true,
     ],
     'report_extendedlog_autocomplete_course' => [
@@ -40,7 +40,7 @@ $functions = [
         'description' => 'Autocomplete for course field',
         'type' => 'read',
         'ajax' => true,
-        'capabilities'  => 'report/extendedlog:view',
+        'capabilities' => 'report/extendedlog:view',
         'loginrequired' => true,
     ],
     'report_extendedlog_autocomplete_user' => [
@@ -49,7 +49,7 @@ $functions = [
         'description' => 'Autocomplete for user field',
         'type' => 'read',
         'ajax' => true,
-        'capabilities'  => 'report/extendedlog:view',
+        'capabilities' => 'report/extendedlog:view',
         'loginrequired' => true,
     ],
 ];

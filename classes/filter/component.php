@@ -24,9 +24,6 @@
 
 namespace report_extendedlog\filter;
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * Class for filtering by event's component.
  *

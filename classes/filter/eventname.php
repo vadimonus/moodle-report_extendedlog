@@ -24,8 +24,6 @@
 
 namespace report_extendedlog\filter;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for filtering by event.
  *
@@ -132,17 +130,17 @@ class eventname extends base {
     private function method_exists ($object, $methodname) {
         global $CFG;
 
-        $debuglevel          = $CFG->debug;
-        $debugdisplay        = $CFG->debugdisplay;
-        $debugdeveloper      = $CFG->debugdeveloper;
-        $CFG->debug          = 0;
-        $CFG->debugdisplay   = false;
+        $debuglevel = $CFG->debug;
+        $debugdisplay = $CFG->debugdisplay;
+        $debugdeveloper = $CFG->debugdeveloper;
+        $CFG->debug = 0;
+        $CFG->debugdisplay = false;
         $CFG->debugdeveloper = false;
 
-        $result = method_exists ($object, $methodname);
+        $result = method_exists($object, $methodname);
 
-        $CFG->debug          = $debuglevel;
-        $CFG->debugdisplay   = $debugdisplay;
+        $CFG->debug = $debuglevel;
+        $CFG->debugdisplay = $debugdisplay;
         $CFG->debugdeveloper = $debugdeveloper;
 
         return $result;
@@ -157,17 +155,17 @@ class eventname extends base {
     private function get_event_name($eventclassname) {
         global $CFG;
 
-        $debuglevel          = $CFG->debug;
-        $debugdisplay        = $CFG->debugdisplay;
-        $debugdeveloper      = $CFG->debugdeveloper;
-        $CFG->debug          = 0;
-        $CFG->debugdisplay   = false;
+        $debuglevel = $CFG->debug;
+        $debugdisplay = $CFG->debugdisplay;
+        $debugdeveloper = $CFG->debugdeveloper;
+        $CFG->debug = 0;
+        $CFG->debugdisplay = false;
         $CFG->debugdeveloper = false;
 
         $name = $eventclassname::get_name();
 
-        $CFG->debug          = $debuglevel;
-        $CFG->debugdisplay   = $debugdisplay;
+        $CFG->debug = $debuglevel;
+        $CFG->debugdisplay = $debugdisplay;
         $CFG->debugdeveloper = $debugdeveloper;
 
         return $name;

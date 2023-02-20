@@ -74,7 +74,7 @@ class logtable extends \report_log_table_log {
     /**
      * Query the reader. Store results in the object for use by build_table.
      *
-     * @param int $pagesize size of page for paginated displayed table.
+     * @param int|null $pagesize size of page for paginated displayed table.
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {

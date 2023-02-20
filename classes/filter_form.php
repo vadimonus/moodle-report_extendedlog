@@ -89,7 +89,7 @@ class filter_form extends \moodleform {
      */
     public function get_page_params() {
         $mform =& $this->_form;
-        if (!$this->is_cancelled() and $this->is_submitted() and $this->is_validated()) {
+        if (!$this->is_cancelled() && $this->is_submitted() && $this->is_validated()) {
             return $mform->exportValues();
         } else {
             return array();

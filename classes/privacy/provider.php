@@ -24,7 +24,6 @@
 
 namespace report_extendedlog\privacy;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Report for extended log searching.

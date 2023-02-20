@@ -23,9 +23,6 @@
  */
 
 namespace report_extendedlog\filter;
-use moodleform;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * An abstract class for log filter filtering.

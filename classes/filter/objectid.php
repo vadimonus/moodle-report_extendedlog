@@ -24,8 +24,6 @@
 
 namespace report_extendedlog\filter;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Сlass for filtering by objectid.
  *

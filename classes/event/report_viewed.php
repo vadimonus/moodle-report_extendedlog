@@ -24,8 +24,6 @@
 
 namespace report_extendedlog\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The report_extendedlog report viewed event class.
  *

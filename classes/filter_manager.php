@@ -24,8 +24,6 @@
 
 namespace report_extendedlog;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Extended log search filter manager.
  *

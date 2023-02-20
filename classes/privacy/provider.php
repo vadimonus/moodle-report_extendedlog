@@ -24,6 +24,7 @@
 
 namespace report_extendedlog\privacy;
 
+use core_privacy\local\metadata\null_provider;
 
 /**
  * Report for extended log searching.
@@ -32,9 +33,7 @@ namespace report_extendedlog\privacy;
  * @copyright  2020 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
-
-    use \core_privacy\local\legacy_polyfill;
+class provider implements null_provider {
 
     /**
      * Get the language string identifier with the component's language
@@ -42,7 +41,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      *
      * @return  string
      */
-    public static function _get_reason() {
+    public static function get_reason(): string {
         return 'privacy:metadata';
     }
 }

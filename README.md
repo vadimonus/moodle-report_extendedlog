@@ -58,3 +58,5 @@ Changes
     - Fixed warning with crud, edulevel and origin filters.
 - Release 2.0.3 (build 2021121302):
     - Fix dmlreadexception on theme More with Postgresql.
+- Release 2.0.4 (build 2023022000):
+    - Do not call functions deprecated in 3.11.

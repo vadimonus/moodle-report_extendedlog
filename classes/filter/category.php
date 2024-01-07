@@ -67,7 +67,7 @@ class category extends base {
                     return false;
                 }
                 return $list[$key];
-            }
+            },
         ];
         $mform->addElement(
             'autocomplete',

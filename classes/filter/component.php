@@ -88,7 +88,7 @@ class component extends base {
         $strcore = get_string('filter_component_core', 'report_extendedlog');
         $topcomponents = array(
             $strall => array(0 => $strall),
-            $strcore => array('core' => $strcore)
+            $strcore => array('core' => $strcore),
         );
         $componentslist = array_merge($topcomponents, $componentslist);
 

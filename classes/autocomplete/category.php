@@ -35,8 +35,6 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use core_text;
 
-defined('MOODLE_INTERNAL') || die();
-
 // For compatibility with 3.5.
 if (!class_exists('\core_course_category')) {
     class_alias('\coursecat', '\core_course_category');

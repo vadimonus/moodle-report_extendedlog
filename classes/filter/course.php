@@ -52,7 +52,7 @@ class course extends base {
                     return false;
                 }
                 return get_string('filter_course_template', 'report_extendedlog', $course);
-            }
+            },
         ];
         $mform->addElement(
             'autocomplete',

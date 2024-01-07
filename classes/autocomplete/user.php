@@ -33,8 +33,6 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use core_user;
 
-defined('MOODLE_INTERNAL') || die();
-
 // For compatibility with 4.1 and earlier.
 if (!class_exists('\core_external\external_api')) {
     class_alias('\external_api', '\core_external\external_api');

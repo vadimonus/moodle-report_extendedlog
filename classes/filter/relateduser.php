@@ -59,7 +59,7 @@ class relateduser extends base {
                 }
                 $user = core_user::get_user($value, $fields);
                 return fullname($user);
-            }
+            },
         ];
         $mform->addElement(
             'autocomplete',

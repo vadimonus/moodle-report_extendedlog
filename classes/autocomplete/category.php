@@ -24,17 +24,41 @@
 
 namespace report_extendedlog\autocomplete;
 
-use \external_value;
-use \external_single_structure;
-use \external_multiple_structure;
+use cache;
+use context_system;
+use core_course_category;
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_text;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
-require_once($CFG->libdir . '/externallib.php');
-if ($CFG->version < 2018120300.00) { // Moodle 3.6.
-    require_once($CFG->libdir . '/coursecatlib.php');
+// For compatibility with 3.5.
+if (!class_exists('\core_course_category')) {
+    class_alias('\coursecat', '\core_course_category');
+}
+// For compatibility with 4.1 and earlier.
+if (!class_exists('\core_external\external_api')) {
+    class_alias('\external_api', '\core_external\external_api');
+}
+if (!class_exists('\core_external\external_description')) {
+    class_alias('\external_description', '\core_external\external_description');
+}
+if (!class_exists('\core_external\external_function_parameters')) {
+    class_alias('\external_function_parameters', '\core_external\external_function_parameters');
+}
+if (!class_exists('\core_external\external_multiple_structure')) {
+    class_alias('\external_multiple_structure', '\core_external\external_multiple_structure');
+}
+if (!class_exists('\core_external\external_single_structure')) {
+    class_alias('\external_single_structure', '\core_external\external_single_structure');
+}
+if (!class_exists('\core_external\external_value')) {
+    class_alias('\external_value', '\core_external\external_value');
 }
 
 /**
@@ -44,14 +68,14 @@ if ($CFG->version < 2018120300.00) { // Moodle 3.6.
  * @copyright  2021 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class category extends \external_api {
+class category extends external_api {
     /**
      * Parameter types.
      *
-     * @return \external_function_parameters Parameters
+     * @return external_function_parameters Parameters
      */
     public static function autocomplete_parameters() {
-        return new \external_function_parameters([
+        return new external_function_parameters([
             'query' => new external_value(PARAM_RAW, 'Query string'),
         ]);
     }
@@ -59,7 +83,7 @@ class category extends \external_api {
     /**
      * Returns result type.
      *
-     * @return \external_description Result type
+     * @return external_description Result type
      */
     public static function autocomplete_returns() {
         return new external_multiple_structure(
@@ -82,7 +106,7 @@ class category extends \external_api {
 
         // Validate the context.
         require_login();
-        $context = \context_system::instance();
+        $context = context_system::instance();
         self::validate_context($context);
         require_capability('report/extendedlog:view', $context);
 
@@ -90,7 +114,7 @@ class category extends \external_api {
         $result = [];
         foreach ($categories as $id => $name) {
             if (empty($query)
-                || \core_text::strpos(\core_text::strtoupper($name), \core_text::strtoupper($query)) !== false
+                || core_text::strpos(core_text::strtoupper($name), core_text::strtoupper($query)) !== false
             ) {
                 $result[] = (object)[
                     'id' => substr($id, 1),
@@ -107,18 +131,12 @@ class category extends \external_api {
      * @return array list of users.
      */
     public static function get_categories_list() {
-        global $CFG;
-
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
+        $cache = cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($categories = $cache->get('categories')) {
             return $categories;
         }
 
-        if ($CFG->version < 2018120300.00) { // Moodle 3.6.
-            $categorieslist = \coursecat::make_categories_list();
-        } else {
-            $categorieslist = \core_course_category::make_categories_list();
-        }
+        $categorieslist = core_course_category::make_categories_list();
         $categories = array();
         foreach ($categorieslist as $key => $name) {
             $categories['a'.$key] = $name;

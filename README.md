@@ -60,3 +60,5 @@ Changes
     - Fix dmlreadexception on theme More with Postgresql.
 - Release 2.0.4 (build 2023022000):
     - Do not call functions deprecated in 3.11.
+- Release 2.0.5 (build 2024010800):
+  - Support for namespace core_external.

@@ -24,14 +24,35 @@
 
 namespace report_extendedlog\autocomplete;
 
-use \external_value;
-use \external_single_structure;
-use \external_multiple_structure;
+use context_system;
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
+// For compatibility with 4.1 and earlier.
+if (!class_exists('\core_external\external_api')) {
+    class_alias('\external_api', '\core_external\external_api');
+}
+if (!class_exists('\core_external\external_description')) {
+    class_alias('\external_description', '\core_external\external_description');
+}
+if (!class_exists('\core_external\external_function_parameters')) {
+    class_alias('\external_function_parameters', '\core_external\external_function_parameters');
+}
+if (!class_exists('\core_external\external_multiple_structure')) {
+    class_alias('\external_multiple_structure', '\core_external\external_multiple_structure');
+}
+if (!class_exists('\core_external\external_single_structure')) {
+    class_alias('\external_single_structure', '\core_external\external_single_structure');
+}
+if (!class_exists('\core_external\external_value')) {
+    class_alias('\external_value', '\core_external\external_value');
+}
 
 /**
  * Course search autocomplete api.
@@ -40,14 +61,14 @@ require_once($CFG->libdir . '/externallib.php');
  * @copyright  2021 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course extends \external_api {
+class course extends external_api {
     /**
      * Parameter types.
      *
-     * @return \external_function_parameters Parameters
+     * @return external_function_parameters Parameters
      */
     public static function autocomplete_parameters() {
-        return new \external_function_parameters([
+        return new external_function_parameters([
             'query' => new external_value(PARAM_RAW, 'Query string'),
         ]);
     }
@@ -55,7 +76,7 @@ class course extends \external_api {
     /**
      * Returns result type.
      *
-     * @return \external_description Result type
+     * @return external_description Result type
      */
     public static function autocomplete_returns() {
         return new external_multiple_structure(
@@ -80,7 +101,7 @@ class course extends \external_api {
 
         // Validate the context.
         require_login();
-        $context = \context_system::instance();
+        $context = context_system::instance();
         self::validate_context($context);
         require_capability('report/extendedlog:view', $context);
 

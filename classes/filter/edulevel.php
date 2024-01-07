@@ -39,11 +39,11 @@ class edulevel extends base {
      * @return array list of edulevels.
      */
     private function get_edulevel_list() {
-        $edulevellist = array(
+        $edulevellist = [
             \core\event\base::LEVEL_TEACHING => get_string('edulevelteacher'),
             \core\event\base::LEVEL_PARTICIPATING => get_string('edulevelparticipating'),
             \core\event\base::LEVEL_OTHER => get_string('edulevelother'),
-        );
+        ];
         return $edulevellist;
     }
 
@@ -54,7 +54,7 @@ class edulevel extends base {
      */
     public function definition_callback(&$mform) {
         $edulevels = $this->get_edulevel_list();
-        $checkboxes = array();
+        $checkboxes = [];
         foreach ($edulevels as $key => $label) {
             $checkboxes[] = $mform->createElement('checkbox', $key, '', $label);
         }
@@ -72,17 +72,17 @@ class edulevel extends base {
     public function get_sql($data, $db) {
         // If 3 items are selected, it means no filter needed.
         if (!empty($data['edulevel']) && count($data['edulevel']) != 3) {
-            $edulevels = array();
+            $edulevels = [];
             foreach ($data['edulevel'] as $key => $value) {
                 $edulevels[] = $key;
             }
-            list($where, $params) = $db->get_in_or_equal($edulevels, SQL_PARAMS_NAMED, 'edulevel');
+            [$where, $params] = $db->get_in_or_equal($edulevels, SQL_PARAMS_NAMED, 'edulevel');
             $where = 'edulevel ' . $where;
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

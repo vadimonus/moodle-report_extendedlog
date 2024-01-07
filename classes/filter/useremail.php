@@ -56,22 +56,22 @@ class useremail extends base {
 
         if (!empty($data['useremail'])) {
             $where = $DB->sql_like('email', ":email", false, false);
-            $params = array('email' => '%' . $DB->sql_like_escape($data['useremail']) . '%');
+            $params = ['email' => '%' . $DB->sql_like_escape($data['useremail']) . '%'];
             $where = $where . ' AND deleted = :deleted';
             $params['deleted'] = 0;
             $users = $DB->get_fieldset_select('user', 'id', $where, $params);
             if (!empty($users)) {
-                list($where, $params) = $db->get_in_or_equal($users, SQL_PARAMS_NAMED, 'useremail');
+                [$where, $params] = $db->get_in_or_equal($users, SQL_PARAMS_NAMED, 'useremail');
                 $where = 'userid ' . $where;
             } else {
                 $where = '1=0';
-                $params = array();
+                $params = [];
             }
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

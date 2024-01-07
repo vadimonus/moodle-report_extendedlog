@@ -39,12 +39,12 @@ class crud extends base {
      * @return array list of actions.
      */
     private function get_crud_list() {
-        $crudlist = array(
+        $crudlist = [
             'c' => get_string('create'),
             'r' => get_string('view'),
             'u' => get_string('update'),
             'd' => get_string('delete'),
-        );
+        ];
         return $crudlist;
     }
 
@@ -55,7 +55,7 @@ class crud extends base {
      */
     public function definition_callback(&$mform) {
         $crud = $this->get_crud_list();
-        $checkboxes = array();
+        $checkboxes = [];
         foreach ($crud as $action => $label) {
             $checkboxes[] = $mform->createElement('checkbox', $action, '', $label);
         }
@@ -73,17 +73,17 @@ class crud extends base {
     public function get_sql($data, $db) {
         // If 4 items are selected, it means no filter needed.
         if (!empty($data['crud']) && count($data['crud']) != 4) {
-            $crud = array();
+            $crud = [];
             foreach ($data['crud'] as $key => $value) {
                 $crud[] = $key;
             }
-            list($where, $params) = $db->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'crud');
+            [$where, $params] = $db->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'crud');
             $where = 'crud ' . $where;
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

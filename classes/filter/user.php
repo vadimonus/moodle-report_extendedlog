@@ -81,16 +81,16 @@ class user extends base {
     public function get_sql($data, $db) {
         global $DB;
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['user'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
         $users = $data['user'];
         if (!is_array($users)) {
             $users = [$users];
         }
-        list($where, $params) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
+        [$where, $params] = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
         $where = 'userid ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 }

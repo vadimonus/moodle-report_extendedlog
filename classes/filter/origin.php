@@ -39,10 +39,10 @@ class origin extends base {
      * @return array list of users.
      */
     private function get_origin_list() {
-        $originlist = array(
+        $originlist = [
             'web' => get_string('filter_origin_web', 'report_extendedlog'),
             'cli' => get_string('filter_origin_cli', 'report_extendedlog'),
-        );
+        ];
         return $originlist;
     }
 
@@ -53,7 +53,7 @@ class origin extends base {
      */
     public function definition_callback(&$mform) {
         $origins = $this->get_origin_list();
-        $checkboxes = array();
+        $checkboxes = [];
         foreach ($origins as $key => $label) {
             $checkboxes[] = $mform->createElement('checkbox', $key, '', $label);
         }
@@ -71,17 +71,17 @@ class origin extends base {
     public function get_sql($data, $db) {
         // If 2 items are selected, it means no filter needed.
         if (!empty($data['origin']) && count($data['origin']) != 2) {
-            $origins = array();
+            $origins = [];
             foreach ($data['origin'] as $key => $value) {
                 $origins[] = $key;
             }
-            list($where, $params) = $db->get_in_or_equal($origins, SQL_PARAMS_NAMED, 'origin');
+            [$where, $params] = $db->get_in_or_equal($origins, SQL_PARAMS_NAMED, 'origin');
             $where = 'origin ' . $where;
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

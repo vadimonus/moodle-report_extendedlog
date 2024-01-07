@@ -40,7 +40,7 @@ class timecreatedafter extends base {
      */
     public function definition_callback(&$mform) {
         $mform->addElement('date_time_selector', 'timecreatedafter', get_string('filter_timecreatedafter', 'report_extendedlog'),
-                array('optional' => true, 'step' => 1));
+                ['optional' => true, 'step' => 1]);
         $mform->setAdvanced('timecreatedafter', $this->advanced);
     }
 
@@ -54,12 +54,12 @@ class timecreatedafter extends base {
     public function get_sql($data, $db) {
         if (!empty($data['timecreatedafter']) && is_int($data['timecreatedafter'])) {
             $where = 'timecreated >= :timecreatedafter';
-            $params = array('timecreatedafter' => $data['timecreatedafter']);
+            $params = ['timecreatedafter' => $data['timecreatedafter']];
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

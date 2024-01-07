@@ -40,7 +40,7 @@ class timecreatedbefore extends base {
      */
     public function definition_callback(&$mform) {
         $mform->addElement('date_time_selector', 'timecreatedbefore', get_string('filter_timecreatedbefore', 'report_extendedlog'),
-                array('optional' => true, 'step' => 1));
+                ['optional' => true, 'step' => 1]);
         $mform->setAdvanced('timecreatedbefore', $this->advanced);
     }
 
@@ -54,12 +54,12 @@ class timecreatedbefore extends base {
     public function get_sql($data, $db) {
         if (!empty($data['timecreatedbefore']) && is_int($data['timecreatedbefore'])) {
             $where = 'timecreated <= :timecreatedbefore';
-            $params = array('timecreatedbefore' => $data['timecreatedbefore']);
+            $params = ['timecreatedbefore' => $data['timecreatedbefore']];
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

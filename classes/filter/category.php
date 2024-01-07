@@ -39,11 +39,11 @@ class category extends base {
      * @return array list of users.
      */
     private function get_searchoptions() {
-        $searchoptions = array(
+        $searchoptions = [
             'category' => get_string('filter_category_options_category', 'report_extendedlog'),
             'categories' => get_string('filter_category_options_subcategories', 'report_extendedlog'),
             'courses' => get_string('filter_category_options_courses', 'report_extendedlog'),
-        );
+        ];
         return $searchoptions;
     }
 
@@ -94,29 +94,29 @@ class category extends base {
         global $DB;
 
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['category'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
         $category = $data['category'];
 
         $context = \context_coursecat::instance($category);
-        $contexts = array($context->id);
+        $contexts = [$context->id];
         if (!empty($data['categoryoptions'])) {
             switch ($data['categoryoptions']) {
                 case 'categories':
-                    $contexts = array($context->id);
+                    $contexts = [$context->id];
                     $contextwhere = 'path LIKE :path AND contextlevel = :contextlevel';
-                    $contextparams = array('path' => $context->path.'/%', 'contextlevel' => CONTEXT_COURSECAT);
+                    $contextparams = ['path' => $context->path.'/%', 'contextlevel' => CONTEXT_COURSECAT];
                     $subcontexts = $DB->get_records_select('context', $contextwhere, $contextparams);
                     foreach ($subcontexts as $subcontext) {
                         $contexts[] = $subcontext->id;
                     }
                     break;
                 case 'courses':
-                    $contexts = array($context->id);
+                    $contexts = [$context->id];
                     $contextwhere = 'path LIKE :path';
-                    $contextparams = array('path' => $context->path.'/%');
+                    $contextparams = ['path' => $context->path.'/%'];
                     $subcontexts = $DB->get_records_select('context', $contextwhere, $contextparams);
                     foreach ($subcontexts as $subcontext) {
                         $contexts[] = $subcontext->id;
@@ -125,9 +125,9 @@ class category extends base {
             }
         }
 
-        list($where, $params) = $db->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'contextid');
+        [$where, $params] = $db->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'contextid');
         $where = 'contextid ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

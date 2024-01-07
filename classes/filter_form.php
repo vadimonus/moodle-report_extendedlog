@@ -45,12 +45,12 @@ class filter_form extends \moodleform {
         $mform = $this->_form;
 
         $html = \html_writer::div(get_string('notificationhighload', 'report_extendedlog'), '',
-                        array('style' => 'text-align: center; margin: 10px;'));
+                        ['style' => 'text-align: center; margin: 10px;']);
         $mform->addElement('html', $html);
 
         $enabledlogreaders = get_log_manager()->get_readers();
         $supportedlogreaders = get_log_manager()->get_supported_logstores('report_extendedlog');
-        $logreaders = array();
+        $logreaders = [];
         foreach ($enabledlogreaders as $pluginname => $logreader) {
             if (!empty($supportedlogreaders[$pluginname])) {
                 $logreaders[$pluginname] = $logreader->get_name();
@@ -92,7 +92,7 @@ class filter_form extends \moodleform {
         if (!$this->is_cancelled() && $this->is_submitted() && $this->is_validated()) {
             return $mform->exportValues();
         } else {
-            return array();
+            return [];
         }
     }
 

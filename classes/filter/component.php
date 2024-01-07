@@ -43,7 +43,7 @@ class component extends base {
      */
     private function get_plugins() {
         $pluginman = \core_plugin_manager::instance();
-        $pluginslist = array();
+        $pluginslist = [];
         $types = \core_component::get_plugin_types();
         foreach ($types as $type => $typedirectory) {
             $plugins = \core_component::get_plugin_list($type);
@@ -74,7 +74,7 @@ class component extends base {
         }
 
         $plugins = $this->get_plugins();
-        $componentslist = array();
+        $componentslist = [];
         foreach ($plugins as $plugin) {
             $groupname = get_string('filter_component_grouptemplate', 'report_extendedlog', $plugin);
             $displayname = get_string('filter_component_template', 'report_extendedlog', $plugin);
@@ -86,10 +86,10 @@ class component extends base {
         \core_collator::ksort($componentslist);
         $strall = get_string('filter_component_all', 'report_extendedlog');
         $strcore = get_string('filter_component_core', 'report_extendedlog');
-        $topcomponents = array(
-            $strall => array(0 => $strall),
-            $strcore => array('core' => $strcore),
-        );
+        $topcomponents = [
+            $strall => [0 => $strall],
+            $strcore => ['core' => $strcore],
+        ];
         $componentslist = array_merge($topcomponents, $componentslist);
 
         $cache->set('components', $componentslist);
@@ -117,12 +117,12 @@ class component extends base {
     public function get_sql($data, $db) {
         if (!empty($data['component'])) {
             $where = 'component = :component';
-            $params = array('component' => $data['component']);
+            $params = ['component' => $data['component']];
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

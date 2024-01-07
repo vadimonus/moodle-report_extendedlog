@@ -35,12 +35,12 @@ $logformat = optional_param('download', '', PARAM_TEXT);
 $url = new moodle_url('/report/extendedlog/index.php');
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-admin_externalpage_setup('reportextendedlog', '', null, '', array('pagelayout' => 'report'));
+admin_externalpage_setup('reportextendedlog', '', null, '', ['pagelayout' => 'report']);
 $PAGE->set_title(get_string('navigationnode', 'report_extendedlog'));
 $PAGE->set_heading(get_string('navigationnode', 'report_extendedlog'));
 
 $filtermanager = new \report_extendedlog\filter_manager();
-$filterform = new \report_extendedlog\filter_form($url, array('filter_manager' => $filtermanager), 'get');
+$filterform = new \report_extendedlog\filter_form($url, ['filter_manager' => $filtermanager], 'get');
 
 if ($filterform->is_submitted() && $pageparams = $filterform->get_page_params()) {
     if (!empty($pageparams['logreader'])) {
@@ -51,21 +51,21 @@ if ($filterform->is_submitted() && $pageparams = $filterform->get_page_params())
         $logreader = $readers[$pageparams['logreader']];
 
         // Get sql parameters.
-        list($where, $params) = $filtermanager->get_sql($pageparams, $logreader);
+        [$where, $params] = $filtermanager->get_sql($pageparams, $logreader);
 
         // Table for printing log records.
         $logtable = new \report_extendedlog\logtable($logreader, $where, $params);
         $fixedparams = \report_extendedlog\filter_manager::fix_array_params($pageparams);
         $logtable->define_baseurl(new moodle_url($url, $fixedparams));
         $logtable->is_downloadable(true);
-        $logtable->show_download_buttons_at(array(TABLE_P_BOTTOM));
+        $logtable->show_download_buttons_at([TABLE_P_BOTTOM]);
 
         // Logging report viewing.
         $logparams = $pageparams;
         unset($logparams['submitbutton']);
         unset($logparams['sesskey']);
         unset($logparams['_qf__report_extendedlog_filter_form']);
-        $eventdata = array('context' => $context, 'other' => $logparams);
+        $eventdata = ['context' => $context, 'other' => $logparams];
         $event = \report_extendedlog\event\report_viewed::create($eventdata);
         $event->trigger();
 

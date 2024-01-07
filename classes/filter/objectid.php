@@ -52,7 +52,7 @@ class objectid extends base {
      * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
      */
     public function validation_callback($data, $files) {
-        $errors = array();
+        $errors = [];
         if ($data['objectid'] !== '' && !is_number($data['objectid'])) {
             $errors['objectid'] = get_string('filter_objectid_error', 'report_extendedlog');
         }
@@ -69,12 +69,12 @@ class objectid extends base {
     public function get_sql($data, $db) {
         if ($data['objectid'] !== '' && is_number($data['objectid'])) {
             $where = 'objectid = :objectid';
-            $params = array('objectid' => $data['objectid']);
+            $params = ['objectid' => $data['objectid']];
         } else {
             $where = '';
-            $params = array();
+            $params = [];
         }
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

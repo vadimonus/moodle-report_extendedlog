@@ -43,7 +43,7 @@ class eventname extends base {
      */
     private function get_plugin_events() {
         $pluginman = \core_plugin_manager::instance();
-        $eventslist = array();
+        $eventslist = [];
         $types = \core_component::get_plugin_types();
         foreach ($types as $type => $typedirectory) {
             $plugins = \core_component::get_plugin_list($type);
@@ -78,7 +78,7 @@ class eventname extends base {
     private function get_core_events() {
         global $CFG;
 
-        $eventslist = array();
+        $eventslist = [];
         $eventsdirectory = "$CFG->libdir/classes/event";
         $events = $this->get_events($eventsdirectory, 'core');
         foreach ($events as $event => $eventdirectory) {
@@ -104,7 +104,7 @@ class eventname extends base {
      * @return array Full location of files from the specified directory.
      */
     private function get_events($directory, $plugin) {
-        $finaleventfiles = array();
+        $finaleventfiles = [];
         if (is_dir($directory)) {
             if ($handle = @opendir($directory)) {
                 $eventfiles = scandir($directory);
@@ -182,7 +182,7 @@ class eventname extends base {
             return $eventslist;
         }
 
-        $eventslist = array();
+        $eventslist = [];
         $pluginevents = $this->get_plugin_events();
         foreach ($pluginevents as $event) {
             $displayname = get_string('filter_event_template', 'report_extendedlog', $event);
@@ -230,17 +230,17 @@ class eventname extends base {
     public function get_sql($data, $db) {
         global $DB;
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['eventname'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
         $eventnames = $data['eventname'];
         if (!is_array($eventnames)) {
             $eventnames = [$eventnames];
         }
-        list($where, $params) = $DB->get_in_or_equal($eventnames, SQL_PARAMS_NAMED, 'eventname');
+        [$where, $params] = $DB->get_in_or_equal($eventnames, SQL_PARAMS_NAMED, 'eventname');
         $where = 'eventname ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

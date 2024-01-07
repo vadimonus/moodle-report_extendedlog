@@ -62,7 +62,7 @@ abstract class base {
      * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
      */
     public function validation_callback($data, $files) {
-        return array();
+        return [];
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class base {
      * @return array($where, $params)
      */
     public function get_sql($data, $db) {
-        return array('', array());
+        return ['', []];
     }
 
 }

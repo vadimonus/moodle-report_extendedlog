@@ -81,17 +81,17 @@ class relateduser extends base {
     public function get_sql($data, $db) {
         global $DB;
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['relateduser'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
         $users = $data['relateduser'];
         if (!is_array($users)) {
             $users = [$users];
         }
-        list($where, $params) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
+        [$where, $params] = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED, 'user');
         $where = 'relateduserid ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

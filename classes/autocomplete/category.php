@@ -135,7 +135,7 @@ class category extends external_api {
         }
 
         $categorieslist = core_course_category::make_categories_list();
-        $categories = array();
+        $categories = [];
         foreach ($categorieslist as $key => $name) {
             $categories['a'.$key] = $name;
         }

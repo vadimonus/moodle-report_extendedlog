@@ -40,8 +40,8 @@ class filter_manager {
      * Constructor
      */
     public function __construct() {
-        $this->filters = array();
-        $filternames = array(
+        $this->filters = [];
+        $filternames = [
             'timecreatedafter' => 0,
             'timecreatedbefore' => 0,
             'user' => 0,
@@ -58,7 +58,7 @@ class filter_manager {
             'origin' => 1,
             'ip4' => 0,
             'ip6' => 1,
-        );
+        ];
         foreach ($filternames as $filtername => $advanced) {
             $fullfiltername = "\\report_extendedlog\\filter\\$filtername";
             $this->filters[] = new $fullfiltername($advanced);
@@ -84,7 +84,7 @@ class filter_manager {
      * @return array of "element_name"=>"error_description" if there are errors, or an empty array if everything is OK.
      */
     public function validation_callback($data, $files) {
-        $errors = array();
+        $errors = [];
         foreach ($this->filters as $filter) {
             $filtererrors = $filter->validation_callback($data, $files);
             $errors = array_merge($errors, $filtererrors);
@@ -102,25 +102,25 @@ class filter_manager {
     public function get_sql($data, $logreader) {
         global $DB;
 
-        $wherearray = array();
-        $where = array();
-        $params = array();
+        $wherearray = [];
+        $where = [];
+        $params = [];
         if ($logreader instanceof \logstore_standard\log\store) {
             $db = $DB;
         } else if ($logreader instanceof \logstore_database\log\store) {
             $db = $logreader->get_extdb();
         } else {
-            return array($where, $params);
+            return [$where, $params];
         }
         foreach ($this->filters as $filter) {
-            list($filterwhere, $filterparams) = $filter->get_sql($data, $db);
+            [$filterwhere, $filterparams] = $filter->get_sql($data, $db);
             if (!empty($filterwhere)) {
                 $wherearray[] = $filterwhere;
                 $params = array_merge($params, $filterparams);
             }
         }
         $where = implode(' AND ', $wherearray);
-        return array($where, $params);
+        return [$where, $params];
     }
 
     /**
@@ -130,8 +130,8 @@ class filter_manager {
      * @return array
      */
     public static function fix_array_params($params) {
-        $badparams = array();
-        $newparams = array();
+        $badparams = [];
+        $newparams = [];
         foreach ($params as $name => $param) {
             if (is_array($param)) {
                 $badparams[] = $name;

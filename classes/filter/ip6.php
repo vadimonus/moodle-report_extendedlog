@@ -55,9 +55,9 @@ class ip6 extends base {
      */
     public function get_sql($data, $db) {
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['ip6'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
 
         $subnets = explode(',', $data['ip6']);
@@ -67,9 +67,9 @@ class ip6 extends base {
                 unset($subnets[$key]);
             }
         }
-        list($where, $params) = $db->get_in_or_equal($subnets, SQL_PARAMS_NAMED, 'ip6in');
+        [$where, $params] = $db->get_in_or_equal($subnets, SQL_PARAMS_NAMED, 'ip6in');
         $where = 'ip ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

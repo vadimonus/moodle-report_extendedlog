@@ -74,17 +74,17 @@ class course extends base {
     public function get_sql($data, $db) {
         global $DB;
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['course'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
         $courses = $data['course'];
         if (!is_array($courses)) {
             $courses = [$courses];
         }
-        list($where, $params) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED, 'user');
+        [$where, $params] = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED, 'user');
         $where = 'courseid ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

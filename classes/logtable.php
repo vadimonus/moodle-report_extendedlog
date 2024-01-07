@@ -50,7 +50,7 @@ class logtable extends report_log_table_log {
     protected $params;
 
     /** @var array */
-    protected $userfullnamesoverride = array();
+    protected $userfullnamesoverride = [];
 
     /**
      * Constructor
@@ -171,7 +171,7 @@ class logtable extends report_log_table_log {
             $fields = 'id' . $userfieldsapi->get_sql()->selects;
         }
         // If we reach that point new users logs have been generated since the last users db query.
-        list($usql, $uparams) = $DB->get_in_or_equal($userid);
+        [$usql, $uparams] = $DB->get_in_or_equal($userid);
         $sql = "SELECT $fields FROM {user} WHERE id " . $usql;
         if (!$user = $DB->get_record_sql($sql, $uparams)) {
             return false;

@@ -84,17 +84,17 @@ class objecttable extends base {
     public function get_sql($data, $db) {
         global $DB;
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['objecttable'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
         $objecttables = $data['objecttable'];
         if (!is_array($objecttables)) {
             $objecttables = [$objecttables];
         }
-        list($where, $params) = $DB->get_in_or_equal($objecttables, SQL_PARAMS_NAMED, 'objecttable');
+        [$where, $params] = $DB->get_in_or_equal($objecttables, SQL_PARAMS_NAMED, 'objecttable');
         $where = 'objecttable ' . $where;
-        return array($where, $params);
+        return [$where, $params];
     }
 
 }

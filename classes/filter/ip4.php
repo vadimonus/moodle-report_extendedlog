@@ -34,10 +34,10 @@ namespace report_extendedlog\filter;
 class ip4 extends base {
 
     /** @var array For addresses in this array will be used LIKE search. */
-    protected $addresseslike = array();
+    protected $addresseslike = [];
 
     /** @var array For addresses in this array will be used IN search. */
-    protected $addressesin = array();
+    protected $addressesin = [];
 
     /**
      * Adds controls specific to this condition in the filter form.
@@ -64,9 +64,9 @@ class ip4 extends base {
      */
     public function get_sql($data, $db) {
         $where = '';
-        $params = array();
+        $params = [];
         if (empty($data['ip4'])) {
-            return array($where, $params);
+            return [$where, $params];
         }
 
         $subnets = explode(',', $data['ip4']);
@@ -84,10 +84,10 @@ class ip4 extends base {
             }
         }
 
-        $conditions = array();
-        $conditionsparams = array();
+        $conditions = [];
+        $conditionsparams = [];
         if (!empty($this->addressesin)) {
-            list($inwhere, $inparams) = $db->get_in_or_equal($this->addressesin, SQL_PARAMS_NAMED, 'ip4in');
+            [$inwhere, $inparams] = $db->get_in_or_equal($this->addressesin, SQL_PARAMS_NAMED, 'ip4in');
             $inwhere = 'ip ' . $inwhere;
             $conditions[] = $inwhere;
             $conditionsparams = $inparams;
@@ -100,13 +100,13 @@ class ip4 extends base {
             $i++;
         }
         if (empty($conditions)) {
-            return array($where, $params);
+            return [$where, $params];
         }
 
         $where = '( ' . implode(' OR ', $conditions) . ' )';
         $params = $conditionsparams;
 
-        return array($where, $params);
+        return [$where, $params];
     }
 
     /**
@@ -114,7 +114,7 @@ class ip4 extends base {
 
      *
      * @param string $subnet
-     * @return array
+     * @return void
      */
     private function get_ip_in_range($subnet) {
         $parts = explode('-', $subnet);
@@ -131,7 +131,6 @@ class ip4 extends base {
         if ($ipend === null) {
             return;
         }
-        $iplist = array();
         for ($ip = ip2long($ipstart); $ip <= ip2long($ipend); $ip++) {
             $this->addressesin[] = long2ip($ip);
         }

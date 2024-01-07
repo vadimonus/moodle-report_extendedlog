@@ -25,6 +25,7 @@
 namespace report_extendedlog\autocomplete;
 
 use cache;
+use cache_store;
 use context_system;
 use core_course_category;
 use core_external\external_api;
@@ -37,6 +38,8 @@ use core_text;
 
 // For compatibility with 3.5.
 if (!class_exists('\core_course_category')) {
+    global $CFG;
+    require_once($CFG->libdir . '/coursecatlib.php');
     class_alias('\coursecat', '\core_course_category');
 }
 // For compatibility with 4.1 and earlier.
@@ -129,7 +132,7 @@ class category extends external_api {
      * @return array list of users.
      */
     public static function get_categories_list() {
-        $cache = cache::make_from_params(\cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'report_extendedlog', 'menu');
         if ($categories = $cache->get('categories')) {
             return $categories;
         }
